@@ -1,0 +1,11 @@
+[
+  { "id": "m1", "name": "(주)대한인프라엔지니어링", "rep": "김철수", "category": ["engineering"], "field": "대규모 교량 및 터널 설계", "location": "서울 강남구", "website": "" },
+  { "id": "m2", "name": "스마트시티솔루션스", "rep": "이영희", "category": ["solution"], "field": "스마트 인프라 관제 시스템", "location": "경기 성남시", "website": "" },
+  { "id": "m3", "name": "글로벌인프라운영", "rep": "박민준", "category": ["operations"], "field": "시설물 유지관리 및 진단", "location": "서울 중구", "website": "" },
+  { "id": "m4", "name": "(주)미래도시건설", "rep": "최지훈", "category": ["engineering"], "field": "스마트 도로 및 교량 설계", "location": "부산 해운대구", "website": "" },
+  { "id": "m5", "name": "에코에너지시스템", "rep": "정수진", "category": ["solution"], "field": "신재생 에너지 통합 관리", "location": "대전 유성구", "website": "" },
+  { "id": "m6", "name": "K-인프라케어", "rep": "한상우", "category": ["operations"], "field": "공공 시설물 안전 진단", "location": "인천 연수구", "website": "" },
+  { "id": "m7", "name": "글로벌토목설계", "rep": "강동원", "category": ["engineering"], "field": "항만 및 해양 구조물 설계", "location": "울산 남구", "website": "" },
+  { "id": "m8", "name": "스마트그리드테크", "rep": "임채원", "category": ["solution"], "field": "지능형 전력망 제어 솔루션", "location": "광주 북구", "website": "" },
+  { "id": "m9", "name": "도시환경매니지먼트", "rep": "송민호", "category": ["operations"], "field": "수처리 시설 운영 및 관리", "location": "대구 수성구", "website": "" }
+]
