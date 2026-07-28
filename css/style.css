@@ -378,6 +378,9 @@ main { flex: 1 0 auto; width: 100%; }
   overflow: hidden;
   background: linear-gradient(135deg, #16305c 0%, #3a5f94 60%, #7ea3d6 100%);
 }
+/* A real photo sits on a plain white backdrop instead of the navy gradient
+   (which is reserved for the decorative placeholder pattern below). */
+.activity-card__media:has(img) { background: var(--surface-container-lowest); }
 .activity-card__media svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.4; }
 /* contain (not cover) so uploaded photos are never cropped — the navy
    gradient background shows through as letterboxing when ratios differ. */
