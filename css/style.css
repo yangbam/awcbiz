@@ -1,5 +1,5 @@
 /* ==========================================================================
-   IPA (Infrastructure Project Association) — Design System
+   AWC기업인연합회 — Design System
    Corporate Modernism — Deep Navy / Slate Gray / Off-White
    ========================================================================== */
 
@@ -163,22 +163,28 @@ main { flex: 1 0 auto; width: 100%; }
   margin: 0 auto;
   height: 100%;
   padding: 0 var(--margin-mobile);
-  display: flex;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--gutter);
 }
 @media (min-width: 1024px) {
   .navbar__inner { padding: 0 var(--margin-desktop); }
 }
 .navbar__logo {
-  font-size: 22px;
+  font-size: 18px;
   font-weight: 700;
   color: var(--primary);
-  letter-spacing: 0.02em;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+@media (min-width: 480px) {
+  .navbar__logo { font-size: 22px; }
 }
 .navbar__links {
   display: none;
   align-items: center;
+  justify-content: center;
   height: 100%;
   gap: var(--gutter);
 }
@@ -186,21 +192,22 @@ main { flex: 1 0 auto; width: 100%; }
   .navbar__links { display: flex; }
 }
 .navbar__link {
-  height: 100%;
+  height: auto;
   display: flex;
   align-items: center;
-  padding: 0 4px;
+  padding: 8px 6px;
   font-family: 'Work Sans', sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 500;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
   color: var(--on-surface-variant);
-  border-bottom: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   transition: color 0.2s ease, border-color 0.2s ease;
 }
 .navbar__link:hover { color: var(--primary); }
 .navbar__link.is-active {
   color: var(--primary);
+  font-weight: 700;
   border-bottom-color: var(--primary);
 }
 .navbar__actions { display: flex; align-items: center; gap: 12px; }
@@ -225,7 +232,7 @@ main { flex: 1 0 auto; width: 100%; }
   height: auto;
   padding: 14px var(--margin-mobile);
   border-bottom: 1px solid var(--surface-container);
-  border-left: 3px solid transparent;
+  border-left: 4px solid transparent;
 }
 .navbar__mobile-menu .navbar__link.is-active {
   border-left-color: var(--primary);
@@ -281,13 +288,14 @@ main { flex: 1 0 auto; width: 100%; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: 0.55;
-  background:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 80px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 1px, transparent 1px 80px),
-    linear-gradient(135deg, #001630 0%, #003366 55%, #1f477b 100%);
+  background: url('../img/메인이미지.jpg') center 60% / cover no-repeat;
 }
-.hero__bg svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.35; }
+.hero__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(0,22,48,0.88) 0%, rgba(0,30,64,0.65) 40%, rgba(0,30,64,0.3) 75%, rgba(0,30,64,0.18) 100%);
+}
 .hero__content {
   position: relative;
   z-index: 1;
@@ -341,23 +349,16 @@ main { flex: 1 0 auto; width: 100%; }
   .chairman { grid-template-columns: 5fr 7fr; }
 }
 .chairman__portrait {
-  height: 340px;
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 4 / 5;
   border-radius: var(--radius);
   border: 1px solid var(--outline-variant);
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255,255,255,0.16) 0 60px, transparent 62px),
-    linear-gradient(160deg, #0b1c30 0%, #1f477b 100%);
-  position: relative;
-  overflow: hidden;
-}
-.chairman__portrait::after {
-  content: "";
-  position: absolute;
-  left: 50%; top: 62%;
-  width: 160px; height: 160px;
-  transform: translate(-50%, 0);
-  border-radius: 50% 50% 0 0;
-  background: rgba(255,255,255,0.14);
+  background: var(--surface-container-low);
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  margin: 0 auto;
 }
 .chairman__rule { width: 48px; height: 4px; background: var(--primary); margin: 12px 0 20px; }
 
@@ -423,21 +424,25 @@ main { flex: 1 0 auto; width: 100%; }
   height: 96px;
   display: flex; align-items: center; justify-content: center;
   border-bottom: 1px solid var(--outline-variant);
-  background: linear-gradient(120deg, var(--surface-container-low), var(--surface-container-high));
+  background: var(--surface-container-lowest);
   color: var(--primary);
+  padding: 12px;
 }
 .member-card__media .icon { width: 32px; height: 32px; }
+.member-card__media img { max-width: 100%; max-height: 100%; object-fit: contain; }
 .member-card__body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
+.member-card__tags { display: flex; flex-wrap: nowrap; gap: 6px; margin-bottom: 10px; overflow-x: auto; }
 .member-card__tag {
   display: inline-block;
+  flex-shrink: 0;
   font-family: 'Work Sans', sans-serif;
   font-size: 12px;
   font-weight: 600;
   padding: 4px 10px;
   border-radius: var(--radius);
-  margin-bottom: 10px;
   background: var(--surface-container-highest);
   color: var(--on-surface);
+  white-space: nowrap;
   width: fit-content;
 }
 .member-card__tag--engineering { background: #d3e4fe; color: #1f3a5c; }
@@ -577,6 +582,24 @@ legend {
 .checkbox-row input[type="checkbox"] { width: 20px; height: 20px; margin-top: 2px; accent-color: var(--primary); flex-shrink: 0; }
 .checkbox-row a { color: var(--primary); text-decoration: underline; }
 
+/* Multi-select "checkbox chip" group (used for 전문분야 — 중복 선택 가능) */
+.checkbox-group { display: flex; flex-wrap: wrap; gap: 10px; }
+.checkbox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius);
+  padding: 10px 16px;
+  cursor: pointer;
+  background: var(--surface-container-lowest);
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+.checkbox-chip:hover { background: var(--surface-container-low); }
+.checkbox-chip:has(input:checked) { border-color: var(--primary); background: var(--surface-container-low); }
+.checkbox-chip input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--primary); flex-shrink: 0; }
+.form-field.has-error .checkbox-chip { border-color: var(--error); }
+
 .form-submit-wrap {
   margin-top: var(--section-gap);
   padding-top: 32px;
@@ -653,14 +676,15 @@ legend {
   grid-template-columns: 1fr;
   gap: var(--gutter);
 }
-@media (min-width: 768px) { .site-footer .container { grid-template-columns: 4fr 8fr; } }
+@media (min-width: 1024px) { .site-footer .container { grid-template-columns: 4fr 8fr; } }
 .site-footer__brand { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-.site-footer__desc { color: #b7c8e1; max-width: 320px; }
+.site-footer__desc { color: #b7c8e1; }
+.site-footer__desc a:hover { text-decoration: underline; }
 .site-footer__links {
   display: flex; flex-wrap: wrap; gap: 24px;
   align-items: center;
 }
-@media (min-width: 768px) { .site-footer__links { justify-content: flex-end; } }
+@media (min-width: 1024px) { .site-footer__links { justify-content: flex-end; } }
 .site-footer__links a { color: #b7c8e1; }
 .site-footer__links a:hover { color: var(--on-primary); }
 .site-footer__bottom {
@@ -684,6 +708,41 @@ legend {
   position: absolute; width: 1px; height: 1px;
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ==========================================================================
+   Legal documents (terms / privacy / consent)
+   ========================================================================== */
+.legal-doc { max-width: 800px; margin: 0 auto; }
+.legal-doc__updated { color: var(--on-surface-variant); margin-bottom: var(--section-gap); }
+.legal-doc section { margin-bottom: 40px; }
+.legal-doc h2 {
+  font-size: 20px;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--outline-variant);
+}
+.legal-doc h3 { font-size: 16px; color: var(--on-surface); margin: 20px 0 8px; }
+.legal-doc p { color: var(--on-surface-variant); margin-bottom: 12px; }
+.legal-doc ol, .legal-doc ul { color: var(--on-surface-variant); padding-left: 20px; margin-bottom: 12px; }
+.legal-doc li { margin-bottom: 8px; }
+.legal-doc table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-size: 14px; }
+.legal-doc th, .legal-doc td {
+  border: 1px solid var(--outline-variant);
+  padding: 10px 14px;
+  text-align: left;
+  color: var(--on-surface-variant);
+  vertical-align: top;
+}
+.legal-doc th { background: var(--surface-container-low); color: var(--on-surface); font-weight: 600; }
+.legal-doc__placeholder { color: var(--primary); font-weight: 600; }
+.legal-doc__footer-note {
+  margin-top: var(--section-gap);
+  padding-top: 24px;
+  border-top: 1px solid var(--outline-variant);
+  color: var(--on-surface-variant);
+  font-size: 14px;
 }
 
 /* ==========================================================================
@@ -763,7 +822,7 @@ legend {
 .admin-table th, .admin-table td {
   text-align: left; padding: 14px 16px; font-size: 14px;
   border-bottom: 1px solid var(--outline-variant);
-  vertical-align: top;
+  vertical-align: middle;
 }
 .admin-table th {
   font-family: 'Work Sans', sans-serif; font-weight: 600; color: var(--on-surface-variant);
@@ -773,7 +832,7 @@ legend {
 .admin-table tbody tr:last-child td { border-bottom: none; }
 .admin-table tbody tr:hover { background: var(--surface-container-low); }
 .admin-table td.nowrap { white-space: nowrap; }
-.admin-table__actions { display: flex; gap: 6px; white-space: nowrap; }
+.admin-table__actions { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 
 .icon-btn {
   display: inline-flex; align-items: center; justify-content: center;
