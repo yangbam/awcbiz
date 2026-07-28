@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>관리자 페이지 | IPA</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="admin-body">
+
+<header class="admin-topbar">
+  <div class="admin-topbar__inner">
+    <div class="admin-topbar__title">
+      <span data-icon="settings"></span>
+      IPA 관리자
+      <span class="admin-topbar__badge">비공개 페이지</span>
+    </div>
+    <a href="index.html" class="admin-topbar__link"><span data-icon="log-out"></span> 사이트 홈으로</a>
+  </div>
+</header>
+
+<p class="admin-notice">
+  이 페이지는 사이트 메뉴 어디에도 연결되어 있지 않으며, URL(management.html)을 직접 입력해야 접근할 수 있습니다.
+  단, 별도 로그인 절차는 없고 데이터는 <strong>이 브라우저에만</strong> 저장되므로 실제 운영 시에는 URL 노출에 주의하세요.
+</p>
+
+<main>
+  <div class="container section">
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-card__value" data-stat="members">0</div>
+        <div class="stat-card__label">총 회원사</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" data-stat="activities">0</div>
+        <div class="stat-card__label">총 활동이력</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" data-stat="applications">0</div>
+        <div class="stat-card__label">총 회원신청</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-card__value" data-stat="pending">0</div>
+        <div class="stat-card__label">미처리 신청</div>
+      </div>
+    </div>
+
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab is-active" data-admin-tab="members">회원사 관리</button>
+      <button type="button" class="admin-tab" data-admin-tab="activities">활동이력 관리</button>
+      <button type="button" class="admin-tab" data-admin-tab="applications">회원신청 목록</button>
+      <button type="button" class="admin-tab" data-admin-tab="backup">데이터 백업</button>
+    </div>
+
+    <!-- ================= 회원사 관리 ================= -->
+    <section class="admin-panel is-active" data-admin-panel="members">
+      <div class="admin-section-head">
+        <h2 class="headline-md">회원사 관리</h2>
+        <button type="button" class="btn btn-primary" data-member-add-toggle><span data-icon="plus"></span> 회원사 추가</button>
+      </div>
+
+      <form class="admin-form-panel" data-member-form>
+        <p class="admin-form-panel__title" data-member-form-title>회원사 추가</p>
+        <input type="hidden" name="id">
+        <div class="admin-form-grid">
+          <div>
+            <label for="m-name">기업명 *</label>
+            <input type="text" id="m-name" name="name" class="input" required>
+          </div>
+          <div>
+            <label for="m-rep">대표자명 *</label>
+            <input type="text" id="m-rep" name="rep" class="input" required>
+          </div>
+          <div>
+            <label for="m-category">부문 *</label>
+            <select id="m-category" name="category" class="input" required>
+              <option value="engineering">엔지니어링 부문 (Engineering)</option>
+              <option value="solution">솔루션 부문 (Solution)</option>
+              <option value="operations">운영관리 부문 (Operations &amp; Management)</option>
+            </select>
+          </div>
+          <div>
+            <label for="m-location">지역 *</label>
+            <input type="text" id="m-location" name="location" class="input" placeholder="예: 서울 강남구" required>
+          </div>
+          <div class="full">
+            <label for="m-field">주요분야 *</label>
+            <input type="text" id="m-field" name="field" class="input" placeholder="예: 대규모 교량 및 터널 설계" required>
+          </div>
+          <div class="full">
+            <label for="m-website">웹사이트 주소 (선택, 회원정보 상세보기에서 새 창으로 연결됩니다)</label>
+            <input type="url" id="m-website" name="website" class="input" placeholder="https://www.company.co.kr">
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <button type="submit" class="btn btn-primary">저장</button>
+          <button type="button" class="btn btn-secondary" data-member-form-cancel>취소</button>
+        </div>
+      </form>
+
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>기업명</th>
+              <th>부문</th>
+              <th>대표자</th>
+              <th>주요분야</th>
+              <th>지역</th>
+              <th>웹사이트</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody data-member-table-body></tbody>
+        </table>
+        <p class="table-empty" data-member-table-empty style="display:none;">등록된 회원사가 없습니다.</p>
+      </div>
+    </section>
+
+    <!-- ================= 활동이력 관리 ================= -->
+    <section class="admin-panel" data-admin-panel="activities">
+      <div class="admin-section-head">
+        <h2 class="headline-md">활동이력 관리</h2>
+        <button type="button" class="btn btn-primary" data-activity-add-toggle><span data-icon="plus"></span> 활동 추가</button>
+      </div>
+
+      <form class="admin-form-panel" data-activity-form>
+        <p class="admin-form-panel__title" data-activity-form-title>활동 추가</p>
+        <input type="hidden" name="id">
+        <div class="admin-form-grid">
+          <div>
+            <label for="a-date">날짜 *</label>
+            <input type="date" id="a-date" name="date" class="input" required>
+          </div>
+          <div>
+            <label for="a-category">카테고리 *</label>
+            <select id="a-category" name="category" class="input" required>
+              <option value="포럼">포럼</option>
+              <option value="세미나">세미나</option>
+              <option value="연구보고">연구보고</option>
+              <option value="프로젝트">프로젝트</option>
+              <option value="총회">총회</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="a-title">제목 *</label>
+            <input type="text" id="a-title" name="title" class="input" required>
+          </div>
+          <div class="full">
+            <label for="a-desc">설명 (목록 카드에 표시되는 짧은 요약) *</label>
+            <textarea id="a-desc" name="description" class="input" rows="3" required></textarea>
+          </div>
+          <div class="full">
+            <label>썸네일 이미지 (선택)</label>
+            <div class="upload-zone" data-activity-thumb-zone tabindex="0" role="button" aria-label="썸네일 이미지 업로드">
+              <span data-icon="upload-cloud"></span>
+              <p class="body-md" style="color: var(--on-surface); margin-bottom: 4px;">클릭하거나 이미지를 이곳으로 드래그하세요</p>
+              <p class="label-md" style="color: var(--on-surface-variant);">JPG, PNG (업로드 시 자동으로 용량이 최적화됩니다)</p>
+            </div>
+            <input type="file" accept="image/*" class="visually-hidden" data-activity-thumb-input>
+            <input type="hidden" name="thumbnail">
+            <div data-activity-thumb-preview-wrap style="display:none; align-items:center; gap:12px; margin-top:12px;">
+              <img data-activity-thumb-preview src="" alt="" style="width:120px; height:80px; object-fit:contain; background:var(--surface-container-low); border-radius: var(--radius); border:1px solid var(--outline-variant);">
+              <button type="button" class="btn btn-secondary" data-activity-thumb-remove>이미지 제거</button>
+            </div>
+          </div>
+          <div class="full">
+            <label for="a-detail">상세 내용 (선택, "상세보기"를 누르면 표시되는 본문)</label>
+            <textarea id="a-detail" name="detail" class="input" rows="8"></textarea>
+          </div>
+          <div class="full">
+            <label>첨부파일 (선택, 상세보기 화면에서 다운로드할 수 있습니다)</label>
+            <div class="upload-zone" data-activity-attachment-zone tabindex="0" role="button" aria-label="첨부파일 업로드">
+              <span data-icon="upload-cloud"></span>
+              <p class="body-md" style="color: var(--on-surface); margin-bottom: 4px;">클릭하거나 파일을 이곳으로 드래그하세요</p>
+              <p class="label-md" style="color: var(--on-surface-variant);">PDF, DOCX, 이미지 등 (2MB 이하)</p>
+            </div>
+            <input type="file" class="visually-hidden" data-activity-attachment-input>
+            <input type="hidden" name="attachmentName">
+            <input type="hidden" name="attachmentDataUrl">
+            <div data-activity-attachment-preview-wrap style="display:none; align-items:center; gap:12px; margin-top:12px;">
+              <span class="label-md" data-activity-attachment-name style="color: var(--on-surface);"></span>
+              <button type="button" class="btn btn-secondary" data-activity-attachment-remove>첨부 제거</button>
+            </div>
+          </div>
+        </div>
+        <div class="admin-form-actions">
+          <button type="submit" class="btn btn-primary">저장</button>
+          <button type="button" class="btn btn-secondary" data-activity-form-cancel>취소</button>
+        </div>
+      </form>
+
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>썸네일</th>
+              <th>날짜</th>
+              <th>카테고리</th>
+              <th>제목</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody data-activity-table-body></tbody>
+        </table>
+        <p class="table-empty" data-activity-table-empty style="display:none;">등록된 활동이 없습니다.</p>
+      </div>
+    </section>
+
+    <!-- ================= 회원신청 목록 ================= -->
+    <section class="admin-panel" data-admin-panel="applications">
+      <div class="admin-section-head">
+        <h2 class="headline-md">회원신청 목록</h2>
+      </div>
+
+      <div class="table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>접수일시</th>
+              <th>기업명</th>
+              <th>담당자</th>
+              <th>이메일 / 연락처</th>
+              <th>관심분야</th>
+              <th>첨부파일</th>
+              <th>상태</th>
+              <th>관리</th>
+            </tr>
+          </thead>
+          <tbody data-application-table-body></tbody>
+        </table>
+        <p class="table-empty" data-application-table-empty style="display:none;">접수된 회원신청이 없습니다.</p>
+      </div>
+    </section>
+
+    <!-- ================= 데이터 백업 ================= -->
+    <section class="admin-panel" data-admin-panel="backup">
+      <div class="admin-section-head">
+        <h2 class="headline-md">데이터 백업</h2>
+      </div>
+      <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 24px;">
+        모든 데이터는 이 브라우저의 로컬 저장소(localStorage)에만 보관됩니다. 캐시를 지우거나 다른 브라우저·기기에서 접속하면
+        데이터가 보이지 않으니, 정기적으로 내보내기를 통해 백업해두는 것을 권장합니다.
+      </p>
+      <div class="backup-actions">
+        <button type="button" class="btn btn-primary" data-export-btn><span data-icon="download"></span> JSON으로 내보내기</button>
+        <label class="btn btn-secondary" for="import-file" style="cursor:pointer;">
+          <span data-icon="upload-cloud"></span> JSON 파일 가져오기
+        </label>
+        <input type="file" id="import-file" accept="application/json" class="visually-hidden" data-import-input>
+        <button type="button" class="btn btn-secondary" data-reset-btn><span data-icon="refresh-cw"></span> 초기 데이터로 재설정</button>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<script src="js/data.js"></script>
+<script src="js/main.js"></script>
+<script src="js/management.js"></script>
+</body>
+</html>
