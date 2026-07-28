@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>관리자 페이지 | IPA</title>
+<title>관리자 페이지 | AWC기업인연합회</title>
 <meta name="robots" content="noindex, nofollow">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,7 +13,7 @@
   <div class="admin-topbar__inner">
     <div class="admin-topbar__title">
       <span data-icon="settings"></span>
-      IPA 관리자
+      AWC기업인연합회 관리자
       <span class="admin-topbar__badge">비공개 페이지</span>
     </div>
     <a href="index.html" class="admin-topbar__link"><span data-icon="log-out"></span> 사이트 홈으로</a>
@@ -73,17 +73,30 @@
             <label for="m-rep">대표자명 *</label>
             <input type="text" id="m-rep" name="rep" class="input" required>
           </div>
-          <div>
-            <label for="m-category">부문 *</label>
-            <select id="m-category" name="category" class="input" required>
-              <option value="engineering">엔지니어링 부문 (Engineering)</option>
-              <option value="solution">솔루션 부문 (Solution)</option>
-              <option value="operations">운영관리 부문 (Operations &amp; Management)</option>
-            </select>
+          <div class="full">
+            <label>전문분야 (중복 선택 가능) *</label>
+            <div class="checkbox-group">
+              <label class="checkbox-chip">
+                <input type="checkbox" name="category" value="engineering">
+                엔지니어링 부문 (Engineering)
+              </label>
+              <label class="checkbox-chip">
+                <input type="checkbox" name="category" value="solution">
+                솔루션 부문 (Solution)
+              </label>
+              <label class="checkbox-chip">
+                <input type="checkbox" name="category" value="operations">
+                운영관리 부문 (Operations &amp; Management)
+              </label>
+            </div>
           </div>
           <div>
             <label for="m-location">지역 *</label>
             <input type="text" id="m-location" name="location" class="input" placeholder="예: 서울 강남구" required>
+          </div>
+          <div>
+            <label for="m-order">순번 (선택, 회원정보 화면 노출 순서 — 비워두면 기본 순서)</label>
+            <input type="number" id="m-order" name="displayOrder" class="input" min="1" step="1" placeholder="예: 1">
           </div>
           <div class="full">
             <label for="m-field">주요분야 *</label>
@@ -92,6 +105,20 @@
           <div class="full">
             <label for="m-website">웹사이트 주소 (선택, 회원정보 상세보기에서 새 창으로 연결됩니다)</label>
             <input type="url" id="m-website" name="website" class="input" placeholder="https://www.company.co.kr">
+          </div>
+          <div class="full">
+            <label>회원사 로고 (선택, 회원정보 목록 상단 아이콘 대신 표시됩니다)</label>
+            <div class="upload-zone" data-member-logo-zone tabindex="0" role="button" aria-label="회원사 로고 업로드">
+              <span data-icon="upload-cloud"></span>
+              <p class="body-md" style="color: var(--on-surface); margin-bottom: 4px;">클릭하거나 로고 이미지를 이곳으로 드래그하세요</p>
+              <p class="label-md" style="color: var(--on-surface-variant);">PNG, JPG (업로드 시 자동으로 용량이 최적화됩니다)</p>
+            </div>
+            <input type="file" accept="image/*" class="visually-hidden" data-member-logo-input>
+            <input type="hidden" name="logo">
+            <div data-member-logo-preview-wrap style="display:none; align-items:center; gap:12px; margin-top:12px;">
+              <img data-member-logo-preview src="" alt="" style="width:96px; height:96px; object-fit:contain; background:var(--surface-container-low); border-radius: var(--radius); border:1px solid var(--outline-variant); padding:8px;">
+              <button type="button" class="btn btn-secondary" data-member-logo-remove>로고 제거</button>
+            </div>
           </div>
         </div>
         <div class="admin-form-actions">
@@ -104,6 +131,8 @@
         <table class="admin-table">
           <thead>
             <tr>
+              <th>순번</th>
+              <th>로고</th>
               <th>기업명</th>
               <th>부문</th>
               <th>대표자</th>
@@ -143,6 +172,10 @@
               <option value="프로젝트">프로젝트</option>
               <option value="총회">총회</option>
             </select>
+          </div>
+          <div>
+            <label for="a-order">순번 (선택, 활동이력 화면 노출 순서 — 비워두면 날짜순)</label>
+            <input type="number" id="a-order" name="displayOrder" class="input" min="1" step="1" placeholder="예: 1">
           </div>
           <div class="full">
             <label for="a-title">제목 *</label>
@@ -196,6 +229,7 @@
         <table class="admin-table">
           <thead>
             <tr>
+              <th>순번</th>
               <th>썸네일</th>
               <th>날짜</th>
               <th>카테고리</th>
@@ -214,6 +248,10 @@
       <div class="admin-section-head">
         <h2 class="headline-md">회원신청 목록</h2>
       </div>
+      <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 20px;">
+        실제 신청 접수는 이제 이메일(Formspree)로 전달됩니다 — <strong>등록하신 이메일 수신함을 확인해주세요.</strong>
+        아래 목록은 이 브라우저에서 제출된 내역만 보여주는 로컬 기록이라, 방문자가 다른 브라우저에서 제출한 신청서는 여기에 나타나지 않습니다.
+      </p>
 
       <div class="table-wrap">
         <table class="admin-table">
@@ -223,7 +261,8 @@
               <th>기업명</th>
               <th>담당자</th>
               <th>이메일 / 연락처</th>
-              <th>관심분야</th>
+              <th>전문분야</th>
+              <th>주요분야</th>
               <th>첨부파일</th>
               <th>상태</th>
               <th>관리</th>
@@ -238,19 +277,39 @@
     <!-- ================= 데이터 백업 ================= -->
     <section class="admin-panel" data-admin-panel="backup">
       <div class="admin-section-head">
-        <h2 class="headline-md">데이터 백업</h2>
+        <h2 class="headline-md">데이터 백업 · 발행</h2>
       </div>
-      <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 24px;">
-        모든 데이터는 이 브라우저의 로컬 저장소(localStorage)에만 보관됩니다. 캐시를 지우거나 다른 브라우저·기기에서 접속하면
-        데이터가 보이지 않으니, 정기적으로 내보내기를 통해 백업해두는 것을 권장합니다.
+
+      <div class="card" style="padding: 20px 24px; margin-bottom: 24px; border-color: var(--primary);">
+        <h3 class="headline-md" style="font-size: 16px; margin-bottom: 8px;">⚠ 실제 사이트에 반영하려면 아래 절차가 꼭 필요합니다</h3>
+        <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 12px;">
+          이 관리자 화면에서 회원사/활동이력을 수정한 내용은 <strong>이 브라우저에만</strong> 임시 저장됩니다(백엔드/DB가 없기 때문입니다).
+          다른 브라우저나 기기의 방문자에게도 똑같이 보이게 하려면, 아래 순서로 직접 반영해야 합니다.
+        </p>
+        <ol class="body-md" style="color: var(--on-surface-variant); padding-left: 20px;">
+          <li>아래 <strong>"회원사 데이터 내보내기"</strong> / <strong>"활동이력 데이터 내보내기"</strong> 버튼으로 <code>members.json</code> / <code>activities.json</code> 파일을 내려받습니다.</li>
+          <li>내려받은 파일로 프로젝트의 <code>data/members.json</code>, <code>data/activities.json</code> 파일을 각각 덮어씁니다.</li>
+          <li>git에 커밋하고 push합니다(예: <code>git add data/*.json &amp;&amp; git commit -m "회원사 정보 업데이트" &amp;&amp; git push</code>).</li>
+          <li>배포가 끝나면 모든 방문자(다른 브라우저 포함)에게 동일하게 반영됩니다.</li>
+        </ol>
+      </div>
+
+      <div class="backup-actions" style="margin-bottom: 24px;">
+        <button type="button" class="btn btn-primary" data-export-members-btn><span data-icon="download"></span> 회원사 데이터 내보내기 (members.json)</button>
+        <button type="button" class="btn btn-primary" data-export-activities-btn><span data-icon="download"></span> 활동이력 데이터 내보내기 (activities.json)</button>
+      </div>
+
+      <h3 class="headline-md" style="font-size: 16px; margin-bottom: 8px;">전체 백업 (회원신청 내역 포함)</h3>
+      <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 16px;">
+        회원신청 내역을 포함한 이 브라우저의 전체 작업 내용을 백업/복원합니다. git 발행용이 아니라 개인 백업 목적입니다.
       </p>
       <div class="backup-actions">
-        <button type="button" class="btn btn-primary" data-export-btn><span data-icon="download"></span> JSON으로 내보내기</button>
+        <button type="button" class="btn btn-secondary" data-export-btn><span data-icon="download"></span> 전체 JSON 백업</button>
         <label class="btn btn-secondary" for="import-file" style="cursor:pointer;">
           <span data-icon="upload-cloud"></span> JSON 파일 가져오기
         </label>
         <input type="file" id="import-file" accept="application/json" class="visually-hidden" data-import-input>
-        <button type="button" class="btn btn-secondary" data-reset-btn><span data-icon="refresh-cw"></span> 초기 데이터로 재설정</button>
+        <button type="button" class="btn btn-secondary" data-reset-btn><span data-icon="refresh-cw"></span> 발행된 데이터로 재설정</button>
       </div>
     </section>
 

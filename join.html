@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>회원신청 | IPA - Infrastructure Project Association</title>
-<meta name="description" content="인프라 프로젝트 협회(IPA) 회원가입 신청서.">
+<title>회원신청 | AWC기업인연합회</title>
+<meta name="description" content="AWC기업인연합회 회원가입 신청서.">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="subnav">
   <div class="subnav__inner">
-    <a href="index.html" class="navbar__logo">IPA</a>
+    <a href="index.html" class="navbar__logo">AWC기업인연합회</a>
     <a href="index.html" class="subnav__close label-md">
       <span data-icon="close"></span> 취소
     </a>
@@ -25,7 +25,7 @@
       <div class="text-center" style="margin-bottom: var(--section-gap);">
         <h1 class="headline-lg" style="margin-bottom: var(--stack-md);">협회의 일원이 되어 인프라의 미래를 함께 만드세요</h1>
         <p class="body-lg" style="color: var(--on-surface-variant);">
-          인프라 프로젝트 협회(IPA)는 관련 산업의 발전과 글로벌 네트워크 구축을 지원합니다. 정회원 가입을 통해 전문 자료 접근, 세미나 참석, 정책 제안 등 다양한 혜택을 누리십시오.
+          AWC기업인연합회는 관련 산업의 발전과 글로벌 네트워크 구축을 지원합니다.<br>정회원 가입을 통해 전문 자료 접근, 세미나 참석, 정책 제안 등 다양한 혜택을 누리십시오.
         </p>
       </div>
 
@@ -75,16 +75,29 @@
           </fieldset>
 
           <fieldset>
-            <legend>관심 분야 (Field of Interest)</legend>
+            <legend>전문분야</legend>
             <div class="form-field" data-form-field>
-              <label for="interestField">주요 사업 영역 또는 관심 인프라 분야를 선택해주세요 *</label>
-              <select id="interestField" name="interestField" class="input" required>
-                <option value="" disabled selected>선택해주세요</option>
-                <option value="engineering">엔지니어링 부문 (Engineering)</option>
-                <option value="solution">솔루션 부문 (Solution)</option>
-                <option value="operations">운영관리 부문 (Operations &amp; Management)</option>
-              </select>
-              <p class="error-msg">관심 분야를 선택해주세요.</p>
+              <label>주요 사업 영역에 해당하는 전문분야를 선택해주세요 (중복 선택 가능) *</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="engineering">
+                  엔지니어링 부문 (Engineering)
+                </label>
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="solution">
+                  솔루션 부문 (Solution)
+                </label>
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="operations">
+                  운영관리 부문 (Operations &amp; Management)
+                </label>
+              </div>
+              <p class="error-msg">전문분야를 한 개 이상 선택해주세요.</p>
+            </div>
+            <div class="form-field" data-form-field style="margin-top: var(--stack-md);">
+              <label for="mainField">주요분야 *</label>
+              <input type="text" id="mainField" name="mainField" class="input" placeholder="예: 대규모 교량 및 터널 설계" required>
+              <p class="error-msg">주요분야를 입력해주세요.</p>
             </div>
           </fieldset>
 
@@ -105,11 +118,11 @@
           <div class="form-submit-wrap">
             <div class="checkbox-row">
               <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
-              <label for="agreeTerms" class="body-md"><a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</label>
+              <label for="agreeTerms" class="body-md"><a href="terms.html" target="_blank" rel="noopener noreferrer">이용약관</a> 및 <a href="privacy.html" target="_blank" rel="noopener noreferrer">개인정보처리방침</a>에 동의합니다.</label>
             </div>
             <div class="checkbox-row">
               <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required>
-              <label for="agreePrivacy" class="body-md"><a href="#">개인정보 수집 및 이용</a>에 동의합니다.</label>
+              <label for="agreePrivacy" class="body-md"><a href="privacy-consent.html" target="_blank" rel="noopener noreferrer">개인정보 수집 및 이용</a>에 동의합니다.</label>
             </div>
             <button type="submit" class="btn btn-primary" style="min-width: 200px;">신청서 제출 <span data-icon="arrow-right"></span></button>
           </div>
@@ -122,14 +135,13 @@
 <footer class="site-footer">
   <div class="container">
     <div>
-      <div class="site-footer__brand">IPA</div>
-      <p class="site-footer__desc">© 2024 Infrastructure Project Association. All rights reserved.</p>
+      <div class="site-footer__brand">AWC기업인연합회</div>
+      <p class="site-footer__desc">© 2026 AWC기업인연합회. All rights reserved.</p>
+      <p class="site-footer__desc">AWC기업인연합회 사무국 대표메일: <a href="mailto:awcbiz@awcbiz.org">awcbiz@awcbiz.org</a></p>
     </div>
     <div class="site-footer__links">
-      <a href="#">이용약관</a>
-      <a href="#">개인정보처리방침</a>
-      <a href="#">문의하기</a>
-      <a href="#">찾아오시는 길</a>
+      <a href="terms.html">이용약관</a>
+      <a href="privacy.html">개인정보처리방침</a>
     </div>
   </div>
 </footer>
