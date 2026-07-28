@@ -39,7 +39,7 @@
       /* No forced height here — the photo is never cropped, it's simply
          scaled down (preserving its own ratio) if it would exceed max-height. */
       var mediaHtml = item.thumbnail
-        ? '<img src="' + item.thumbnail + '" alt="" style="display:block; width:100%; max-height:560px; object-fit:contain; border-radius: var(--radius-md); margin:0 auto var(--section-gap); background: var(--surface-container-low);">'
+        ? '<img src="' + item.thumbnail + '" alt="" style="display:block; width:100%; max-height:560px; object-fit:contain; border-radius: var(--radius-md); margin:0 auto var(--section-gap); background: var(--surface-container-lowest);">'
         : "";
       var detailHtml = item.detail
         ? '<div class="body-lg" style="white-space: pre-wrap; color: var(--on-surface); margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--outline-variant);">' + esc(item.detail) + "</div>"
