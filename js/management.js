@@ -456,9 +456,6 @@
         var websiteLine = a.website
           ? '<br><a href="' + esc(a.website) + '" target="_blank" rel="noopener noreferrer" style="font-size:12px;">' + esc(a.website) + "</a>"
           : "";
-        var fileCell = a.fileDataUrl
-          ? '<a href="' + a.fileDataUrl + '" download="' + esc(a.fileName || "attachment") + '" class="link-inline" style="margin-top:0;"><span data-icon="download"></span> ' + esc(a.fileName || "다운로드") + "</a>"
-          : (a.fileName ? esc(a.fileName) + '<br><span style="color:var(--on-surface-variant);font-size:12px;">(파일 데이터 없음)</span>' : "-");
         return (
           "<tr>" +
           '<td class="nowrap">' + esc(submitted) + "</td>" +
@@ -467,7 +464,6 @@
           "<td>" + esc(a.contactEmail) + "<br>" + esc(a.contactPhone) + "</td>" +
           "<td>" + esc(toArray(a.interestField).map(function (c) { return MEMBER_CATEGORY_LABEL[c] || c; }).join(", ")) + "</td>" +
           "<td>" + esc(a.mainField || "-") + "</td>" +
-          "<td>" + fileCell + "</td>" +
           "<td>" + statusBadge + "</td>" +
           "<td><div class=\"admin-table__actions\">" +
           '<button type="button" class="icon-btn" data-app-toggle="' + a.id + '" aria-label="상태 전환"><span data-icon="check-circle"></span></button>' +

@@ -391,9 +391,7 @@
     }
   }
 
-  /* ---- Join page: file upload + validation + success modal + persist ---- */
-  var JOIN_ATTACHMENT_MAX_BYTES = 2 * 1024 * 1024; /* 2MB — keep localStorage usage in check */
-
+  /* ---- Join page: validation + Formspree email + success modal + persist ---- */
   var FORMSPREE_ENDPOINT = "https://formspree.io/f/meeynakl";
   var FORMSPREE_INTEREST_LABEL = { engineering: "엔지니어링 부문", solution: "솔루션 부문", operations: "운영관리 부문" };
 
@@ -401,7 +399,7 @@
     return FORMSPREE_ENDPOINT.indexOf("YOUR_FORM_ID") === -1;
   }
 
-  function submitToFormspree(form, file, checkedInterests) {
+  function submitToFormspree(form, checkedInterests) {
     if (!isFormspreeConfigured()) {
       console.warn("AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 로컬에만 저장합니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
       return Promise.resolve({ skipped: true });
@@ -416,7 +414,6 @@
     fd.append("전문분야", checkedInterests.map(function (v) { return FORMSPREE_INTEREST_LABEL[v] || v; }).join(", "));
     fd.append("주요분야", form.mainField.value.trim());
     fd.append("_subject", "[AWC기업인연합회] 새 회원신청 - " + form.companyName.value.trim());
-    if (file) fd.append("첨부파일", file, file.name);
 
     return fetch(FORMSPREE_ENDPOINT, {
       method: "POST",
@@ -431,40 +428,6 @@
   function initJoinForm() {
     var form = document.querySelector("[data-join-form]");
     if (!form) return;
-
-    var uploadZone = document.querySelector("[data-upload-zone]");
-    var fileInput = document.querySelector("[data-upload-input]");
-    var filenameLabel = document.querySelector("[data-upload-filename]");
-
-    if (uploadZone && fileInput) {
-      uploadZone.addEventListener("click", function () { fileInput.click(); });
-      uploadZone.addEventListener("keydown", function (e) {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fileInput.click(); }
-      });
-      ["dragover", "dragenter"].forEach(function (evt) {
-        uploadZone.addEventListener(evt, function (e) { e.preventDefault(); uploadZone.classList.add("is-dragover"); });
-      });
-      ["dragleave", "drop"].forEach(function (evt) {
-        uploadZone.addEventListener(evt, function (e) { e.preventDefault(); uploadZone.classList.remove("is-dragover"); });
-      });
-      uploadZone.addEventListener("drop", function (e) {
-        if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length) {
-          fileInput.files = e.dataTransfer.files;
-          updateFilename();
-        }
-      });
-      fileInput.addEventListener("change", updateFilename);
-    }
-
-    function updateFilename() {
-      if (!filenameLabel) return;
-      if (fileInput.files && fileInput.files.length) {
-        filenameLabel.textContent = "선택된 파일: " + fileInput.files[0].name;
-        filenameLabel.style.display = "block";
-      } else {
-        filenameLabel.style.display = "none";
-      }
-    }
 
     function showFieldError(field) {
       var wrap = field.closest("[data-form-field]");
@@ -488,18 +451,11 @@
       requiredFields.forEach(function (field) {
         var ok = true;
         if (field.type === "checkbox") ok = field.checked;
-        else if (field.type === "file") ok = field.files && field.files.length > 0;
         else ok = field.value.trim() !== "";
 
         if (!ok) { valid = false; showFieldError(field); }
         else { clearFieldError(field); }
       });
-
-      var file = fileInput && fileInput.files.length ? fileInput.files[0] : null;
-      if (file && file.size > JOIN_ATTACHMENT_MAX_BYTES) {
-        valid = false;
-        showFieldError(fileInput);
-      }
 
       var interestCheckboxes = Array.prototype.slice.call(form.querySelectorAll('input[name="interestField"]'));
       var checkedInterests = interestCheckboxes.filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.value; });
@@ -514,7 +470,7 @@
         return;
       }
 
-      var finish = function (fileDataUrl) {
+      var finish = function () {
         if (window.DataStore) {
           try {
             window.DataStore.addApplication({
@@ -525,42 +481,26 @@
               contactEmail: form.contactEmail.value.trim(),
               contactPhone: form.contactPhone.value.trim(),
               interestField: checkedInterests,
-              mainField: form.mainField.value.trim(),
-              fileName: file ? file.name : "",
-              fileType: file ? file.type : "",
-              fileDataUrl: fileDataUrl || ""
+              mainField: form.mainField.value.trim()
             });
           } catch (err) {
             console.error("AWC기업인연합회: failed to save application", err);
-            alert("첨부파일 용량이 너무 커서 저장하지 못했습니다. 더 작은 파일로 다시 시도해주세요.");
-            if (submitBtn) submitBtn.disabled = false;
-            return;
           }
         }
         openModal();
         form.reset();
-        updateFilename();
         if (submitBtn) submitBtn.disabled = false;
       };
 
       if (submitBtn) submitBtn.disabled = true;
 
-      submitToFormspree(form, file, checkedInterests)
+      submitToFormspree(form, checkedInterests)
+        .then(finish)
         .catch(function (err) {
           console.error("AWC기업인연합회: Formspree 제출 실패", err);
           alert("신청서 전송에 실패했습니다. 인터넷 연결을 확인하시고 다시 시도해주세요.");
           if (submitBtn) submitBtn.disabled = false;
-          return Promise.reject(err);
-        })
-        .then(function () {
-          if (!file) return "";
-          /* Formspree already received the file — this local copy is just
-             for the admin's own record, so a read failure shouldn't block
-             an otherwise-successful submission. */
-          return window.IPA.readFileAsDataUrl(file, JOIN_ATTACHMENT_MAX_BYTES).catch(function () { return ""; });
-        })
-        .then(finish)
-        .catch(function () { /* already handled above */ });
+        });
     });
 
     var modal = document.querySelector("[data-success-modal]");
