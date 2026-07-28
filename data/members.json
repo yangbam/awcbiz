@@ -11,32 +11,5 @@
     "website": "",
     "displayOrder": null,
     "logo": ""
-  },
-  {
-    "id": "m7",
-    "name": "글로벌토목설계",
-    "rep": "강동원",
-    "category": "engineering",
-    "field": "항만 및 해양 구조물 설계",
-    "location": "울산 남구",
-    "website": ""
-  },
-  {
-    "id": "m8",
-    "name": "스마트그리드테크",
-    "rep": "임채원",
-    "category": "solution",
-    "field": "지능형 전력망 제어 솔루션",
-    "location": "광주 북구",
-    "website": ""
-  },
-  {
-    "id": "m9",
-    "name": "도시환경매니지먼트",
-    "rep": "송민호",
-    "category": "operations",
-    "field": "수처리 시설 운영 및 관리",
-    "location": "대구 수성구",
-    "website": ""
   }
 ]
