@@ -1,5 +1,5 @@
 /* ==========================================================================
-   IPA site — shared behaviour (icons, nav, members list, activities list,
+   AWC기업인연합회 site — shared behaviour (icons, nav, members list, activities list,
    join form). Pure vanilla JS, no dependencies. Data comes from DataStore
    (js/data.js), which must be loaded before this file.
    ========================================================================== */
@@ -63,9 +63,10 @@
     return parts[0] + ". " + parts[1] + ". " + parts[2];
   }
 
-  /* Resize + compress an image File to a JPEG data URL, so uploaded photos
-     stay small enough to live in localStorage (no backend/file storage). */
-  function resizeImageFile(file, maxWidth, quality) {
+  /* Resize + compress an image File to a data URL, so uploaded photos stay
+     small enough to live in localStorage (no backend/file storage). Defaults
+     to JPEG; pass mimeType "image/png" for logos etc. that need transparency. */
+  function resizeImageFile(file, maxWidth, quality, mimeType) {
     return new Promise(function (resolve, reject) {
       var reader = new FileReader();
       reader.onerror = function () { reject(new Error("read failed")); };
@@ -81,7 +82,7 @@
           canvas.height = h;
           var ctx = canvas.getContext("2d");
           ctx.drawImage(img, 0, 0, w, h);
-          resolve(canvas.toDataURL("image/jpeg", quality || 0.82));
+          resolve(canvas.toDataURL(mimeType || "image/jpeg", quality || 0.82));
         };
         img.src = reader.result;
       };
@@ -114,6 +115,36 @@
     return v;
   }
 
+  /* Category fields used to be a single string; they're now multi-select
+     arrays. This keeps older localStorage data (single string) working. */
+  function toArray(v) {
+    if (Array.isArray(v)) return v;
+    return v ? [v] : [];
+  }
+
+  /* Items with a 순번(displayOrder) show first, ascending by that number;
+     items without one keep their default order (fallbackComparator, if
+     given — otherwise their existing relative order), listed after. */
+  function sortByDisplayOrder(list, fallbackComparator) {
+    var withOrder = [];
+    var withoutOrder = [];
+    list.forEach(function (item) {
+      if (item.displayOrder !== undefined && item.displayOrder !== null && item.displayOrder !== "") withOrder.push(item);
+      else withoutOrder.push(item);
+    });
+    withOrder.sort(function (a, b) { return Number(a.displayOrder) - Number(b.displayOrder); });
+    if (fallbackComparator) withoutOrder.sort(fallbackComparator);
+    return withOrder.concat(withoutOrder);
+  }
+
+  function sortMembersForDisplay(list) {
+    return sortByDisplayOrder(list);
+  }
+
+  function byDateDesc(a, b) {
+    return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
+  }
+
   /* Expose a small namespace so other scripts (management.js, activity-detail.js) can reuse icons/helpers */
   window.IPA = {
     icons: ICON_PATHS,
@@ -123,7 +154,11 @@
     formatDate: formatDate,
     resizeImageFile: resizeImageFile,
     readFileAsDataUrl: readFileAsDataUrl,
-    normalizeUrl: normalizeUrl
+    normalizeUrl: normalizeUrl,
+    toArray: toArray,
+    sortByDisplayOrder: sortByDisplayOrder,
+    sortMembersForDisplay: sortMembersForDisplay,
+    byDateDesc: byDateDesc
   };
 
   /* ---- Mobile nav toggle ---- */
@@ -142,19 +177,27 @@
 
   /* ---- Members page: render from DataStore + search/filter/paginate ---- */
   var MEMBER_CATEGORY_LABEL = {
-    engineering: "엔지니어링 부문 (Engineering)",
-    solution: "솔루션 부문 (Solution)",
-    operations: "운영관리 부문 (Operations &amp; Management)"
+    engineering: "엔지니어링",
+    solution: "솔루션",
+    operations: "운영관리"
   };
   var MEMBER_CATEGORY_ICON = { engineering: "tool", solution: "monitor", operations: "users" };
   var MEMBER_PAGE_SIZE = 9;
 
   function memberCardHtml(m) {
+    var categories = toArray(m.category);
+    var mediaIcon = MEMBER_CATEGORY_ICON[categories[0]] || "tool";
+    var mediaInner = m.logo
+      ? '<img src="' + m.logo + '" alt="' + escapeHtml(m.name) + ' 로고">'
+      : '<span data-icon="' + mediaIcon + '"></span>';
+    var tags = categories.map(function (cat) {
+      return '<span class="member-card__tag member-card__tag--' + escapeHtml(cat) + ' label-md">' + (MEMBER_CATEGORY_LABEL[cat] || escapeHtml(cat)) + "</span>";
+    }).join("");
     return (
-      '<article class="card member-card" data-category="' + escapeHtml(m.category) + '">' +
-      '<div class="member-card__media"><span data-icon="' + MEMBER_CATEGORY_ICON[m.category] + '"></span></div>' +
+      '<article class="card member-card" data-category="' + escapeHtml(categories.join(",")) + '">' +
+      '<div class="member-card__media">' + mediaInner + "</div>" +
       '<div class="member-card__body">' +
-      '<span class="member-card__tag member-card__tag--' + escapeHtml(m.category) + ' label-md">' + MEMBER_CATEGORY_LABEL[m.category] + "</span>" +
+      '<div class="member-card__tags">' + tags + "</div>" +
       '<h3 class="headline-md member-card__name">' + escapeHtml(m.name) + "</h3>" +
       '<ul class="member-card__meta body-md">' +
       '<li><span data-icon="user"></span>대표: ' + escapeHtml(m.rep) + "</li>" +
@@ -162,7 +205,7 @@
       '<li><span data-icon="map-pin"></span>' + escapeHtml(m.location) + "</li>" +
       "</ul>" +
       (m.website
-        ? '<a href="' + escapeHtml(m.website) + '" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block">홈페이지 방문 (새창) <span data-icon="arrow-right"></span></a>'
+        ? '<a href="' + escapeHtml(m.website) + '" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block">홈페이지 방문 <span data-icon="arrow-right"></span></a>'
         : '<span class="btn btn-secondary btn-block" style="opacity:0.5; cursor:not-allowed;" aria-disabled="true">등록된 홈페이지 없음</span>') +
       "</div></article>"
     );
@@ -192,14 +235,15 @@
     function getFiltered() {
       var term = (searchInput && searchInput.value || "").trim().toLowerCase();
       var category = currentCategory();
-      var all = window.DataStore.getMembers();
+      var all = window.DataStore.getPublishedMembers();
       if (totalCountEl) totalCountEl.textContent = all.length;
-      return all.filter(function (m) {
-        var matchesCategory = category === "all" || m.category === category;
+      var filtered = all.filter(function (m) {
+        var matchesCategory = category === "all" || toArray(m.category).indexOf(category) !== -1;
         var haystack = (m.name + " " + m.rep + " " + m.field + " " + m.location).toLowerCase();
         var matchesTerm = term === "" || haystack.indexOf(term) !== -1;
         return matchesCategory && matchesTerm;
       });
+      return sortMembersForDisplay(filtered);
     }
 
     function renderPagination(totalItems) {
@@ -326,9 +370,7 @@
     var loadMoreBtn = document.querySelector("[data-load-more]");
     if (!container || !window.DataStore) return;
 
-    var items = window.DataStore.getActivities().slice().sort(function (a, b) {
-      return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
-    });
+    var items = sortByDisplayOrder(window.DataStore.getPublishedActivities().slice(), byDateDesc);
 
     var html = items.map(function (item, idx) {
       return activityCardHtml(item, idx === 0, idx >= ACTIVITY_INITIAL_COUNT);
@@ -351,6 +393,40 @@
 
   /* ---- Join page: file upload + validation + success modal + persist ---- */
   var JOIN_ATTACHMENT_MAX_BYTES = 2 * 1024 * 1024; /* 2MB — keep localStorage usage in check */
+
+  var FORMSPREE_ENDPOINT = "https://formspree.io/f/meeynakl";
+  var FORMSPREE_INTEREST_LABEL = { engineering: "엔지니어링 부문", solution: "솔루션 부문", operations: "운영관리 부문" };
+
+  function isFormspreeConfigured() {
+    return FORMSPREE_ENDPOINT.indexOf("YOUR_FORM_ID") === -1;
+  }
+
+  function submitToFormspree(form, file, checkedInterests) {
+    if (!isFormspreeConfigured()) {
+      console.warn("AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 로컬에만 저장합니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
+      return Promise.resolve({ skipped: true });
+    }
+    var fd = new FormData();
+    fd.append("기업명", form.companyName.value.trim());
+    fd.append("대표자명", form.representative.value.trim());
+    fd.append("회사 홈페이지", window.IPA.normalizeUrl(form.website.value));
+    fd.append("담당자 성명", form.contactName.value.trim());
+    fd.append("이메일", form.contactEmail.value.trim());
+    fd.append("연락처", form.contactPhone.value.trim());
+    fd.append("전문분야", checkedInterests.map(function (v) { return FORMSPREE_INTEREST_LABEL[v] || v; }).join(", "));
+    fd.append("주요분야", form.mainField.value.trim());
+    fd.append("_subject", "[AWC기업인연합회] 새 회원신청 - " + form.companyName.value.trim());
+    if (file) fd.append("첨부파일", file, file.name);
+
+    return fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: fd,
+      headers: { "Accept": "application/json" }
+    }).then(function (res) {
+      if (!res.ok) throw new Error("Formspree submit failed: " + res.status);
+      return res.json();
+    });
+  }
 
   function initJoinForm() {
     var form = document.querySelector("[data-join-form]");
@@ -425,6 +501,13 @@
         showFieldError(fileInput);
       }
 
+      var interestCheckboxes = Array.prototype.slice.call(form.querySelectorAll('input[name="interestField"]'));
+      var checkedInterests = interestCheckboxes.filter(function (cb) { return cb.checked; }).map(function (cb) { return cb.value; });
+      if (interestCheckboxes.length && checkedInterests.length === 0) {
+        valid = false;
+        showFieldError(interestCheckboxes[0]);
+      }
+
       if (!valid) {
         var firstError = form.querySelector(".has-error");
         if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
@@ -441,13 +524,14 @@
               contactName: form.contactName.value.trim(),
               contactEmail: form.contactEmail.value.trim(),
               contactPhone: form.contactPhone.value.trim(),
-              interestField: form.interestField.value,
+              interestField: checkedInterests,
+              mainField: form.mainField.value.trim(),
               fileName: file ? file.name : "",
               fileType: file ? file.type : "",
               fileDataUrl: fileDataUrl || ""
             });
           } catch (err) {
-            console.error("IPA: failed to save application", err);
+            console.error("AWC기업인연합회: failed to save application", err);
             alert("첨부파일 용량이 너무 커서 저장하지 못했습니다. 더 작은 파일로 다시 시도해주세요.");
             if (submitBtn) submitBtn.disabled = false;
             return;
@@ -460,16 +544,23 @@
       };
 
       if (submitBtn) submitBtn.disabled = true;
-      if (file) {
-        window.IPA.readFileAsDataUrl(file, JOIN_ATTACHMENT_MAX_BYTES)
-          .then(finish)
-          .catch(function () {
-            alert("첨부파일을 읽지 못했습니다. 다른 파일로 다시 시도해주세요.");
-            if (submitBtn) submitBtn.disabled = false;
-          });
-      } else {
-        finish("");
-      }
+
+      submitToFormspree(form, file, checkedInterests)
+        .catch(function (err) {
+          console.error("AWC기업인연합회: Formspree 제출 실패", err);
+          alert("신청서 전송에 실패했습니다. 인터넷 연결을 확인하시고 다시 시도해주세요.");
+          if (submitBtn) submitBtn.disabled = false;
+          return Promise.reject(err);
+        })
+        .then(function () {
+          if (!file) return "";
+          /* Formspree already received the file — this local copy is just
+             for the admin's own record, so a read failure shouldn't block
+             an otherwise-successful submission. */
+          return window.IPA.readFileAsDataUrl(file, JOIN_ATTACHMENT_MAX_BYTES).catch(function () { return ""; });
+        })
+        .then(finish)
+        .catch(function () { /* already handled above */ });
     });
 
     var modal = document.querySelector("[data-success-modal]");
@@ -486,8 +577,11 @@
   document.addEventListener("DOMContentLoaded", function () {
     injectIcons();
     initNav();
-    initMembers();
-    initActivities();
     initJoinForm();
+    var ready = (window.DataStore && window.DataStore.ready) || Promise.resolve();
+    ready.then(function () {
+      initMembers();
+      initActivities();
+    });
   });
 })();
