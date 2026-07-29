@@ -30,6 +30,7 @@
           '<p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 32px;">삭제되었거나 잘못된 주소일 수 있습니다.</p>' +
           '<a href="activities.html" class="btn btn-primary">활동이력으로 돌아가기</a>' +
           "</div>";
+        root.classList.add("fade-in-up");
         return;
       }
 
@@ -61,6 +62,7 @@
         "</div>";
 
       window.IPA.injectIcons(root);
+      root.classList.add("fade-in-up");
     }
   });
 })();

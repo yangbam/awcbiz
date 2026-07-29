@@ -145,6 +145,22 @@
     return a.date < b.date ? 1 : a.date > b.date ? -1 : 0;
   }
 
+  /* Counts a number element up from 0 to `target` — used once on page load
+     for stat/total displays so the number feels alive rather than static. */
+  function animateCount(el, target, duration) {
+    if (!el) return;
+    if (!target) { el.textContent = "0"; return; }
+    var start = null;
+    function step(timestamp) {
+      if (start === null) start = timestamp;
+      var progress = Math.min((timestamp - start) / (duration || 800), 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(eased * target);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
   /* Expose a small namespace so other scripts (management.js, activity-detail.js) can reuse icons/helpers */
   window.IPA = {
     icons: ICON_PATHS,
@@ -158,8 +174,31 @@
     toArray: toArray,
     sortByDisplayOrder: sortByDisplayOrder,
     sortMembersForDisplay: sortMembersForDisplay,
-    byDateDesc: byDateDesc
+    byDateDesc: byDateDesc,
+    animateCount: animateCount
   };
+
+  /* ---- Scroll reveal: fades/slides [data-reveal] elements in once they enter
+     the viewport. Dynamic grids (member/activity cards) animate on their own
+     via the CSS `card-in` keyframe instead, since they re-render on every
+     search/filter keystroke and re-observing them would replay awkwardly. */
+  function initScrollReveal() {
+    var items = document.querySelectorAll("[data-reveal]");
+    if (!items.length) return;
+    if (!("IntersectionObserver" in window)) {
+      items.forEach(function (el) { el.classList.add("is-revealed"); });
+      return;
+    }
+    var observer = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-revealed");
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    items.forEach(function (el) { observer.observe(el); });
+  }
 
   /* ---- Mobile nav toggle ---- */
   function initNav() {
@@ -236,7 +275,6 @@
       var term = (searchInput && searchInput.value || "").trim().toLowerCase();
       var category = currentCategory();
       var all = window.DataStore.getPublishedMembers();
-      if (totalCountEl) totalCountEl.textContent = all.length;
       var filtered = all.filter(function (m) {
         var matchesCategory = category === "all" || toArray(m.category).indexOf(category) !== -1;
         var haystack = (m.name + " " + m.rep + " " + m.field + " " + m.location).toLowerCase();
@@ -309,6 +347,7 @@
       });
     });
 
+    if (totalCountEl) animateCount(totalCountEl, window.DataStore.getPublishedMembers().length, 900);
     render();
   }
 
@@ -385,7 +424,8 @@
         loadMoreBtn.addEventListener("click", function () {
           container.querySelectorAll(".activity-card.is-hidden").forEach(function (card) { card.classList.remove("is-hidden"); });
           loadMoreBtn.setAttribute("disabled", "disabled");
-          loadMoreBtn.textContent = "모든 활동을 확인했습니다";
+          loadMoreBtn.innerHTML = "모든 활동을 확인했습니다 <span data-icon=\"check-circle\"></span>";
+          injectIcons(loadMoreBtn);
         });
       }
     }
@@ -518,6 +558,7 @@
     injectIcons();
     initNav();
     initJoinForm();
+    initScrollReveal();
     var ready = (window.DataStore && window.DataStore.ready) || Promise.resolve();
     ready.then(function () {
       initMembers();

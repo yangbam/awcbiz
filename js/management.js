@@ -46,7 +46,9 @@
     }
     function setStat(key, value) {
       var el = document.querySelector('[data-stat="' + key + '"]');
-      if (el) el.textContent = value;
+      if (!el) return;
+      if (window.IPA && window.IPA.animateCount) window.IPA.animateCount(el, value, 500);
+      else el.textContent = value;
     }
 
     /* ================= 회원사 관리 ================= */
@@ -67,6 +69,7 @@
       if (dataUrl) {
         memberLogoPreview.src = dataUrl;
         memberLogoPreviewWrap.style.display = "flex";
+        memberLogoPreviewWrap.style.animation = "fade-up 0.35s var(--ease) both";
       } else {
         memberLogoPreview.src = "";
         memberLogoPreviewWrap.style.display = "none";
@@ -248,6 +251,7 @@
       if (dataUrl) {
         activityThumbPreview.src = dataUrl;
         activityThumbPreviewWrap.style.display = "flex";
+        activityThumbPreviewWrap.style.animation = "fade-up 0.35s var(--ease) both";
       } else {
         activityThumbPreview.src = "";
         activityThumbPreviewWrap.style.display = "none";
@@ -295,6 +299,7 @@
       if (name && dataUrl) {
         activityAttachmentName.textContent = name;
         activityAttachmentPreviewWrap.style.display = "flex";
+        activityAttachmentPreviewWrap.style.animation = "fade-up 0.35s var(--ease) both";
       } else {
         activityAttachmentName.textContent = "";
         activityAttachmentPreviewWrap.style.display = "none";
