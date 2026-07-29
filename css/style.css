@@ -516,13 +516,12 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
   overflow: hidden;
   background: linear-gradient(135deg, #16305c 0%, #3a5f94 60%, #7ea3d6 100%);
 }
-/* A real photo sits on a plain white backdrop instead of the navy gradient
-   (which is reserved for the decorative placeholder pattern below). */
-.activity-card__media:has(img) { background: var(--surface-container-lowest); }
 .activity-card__media svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.4; }
-/* contain (not cover) so uploaded photos are never cropped — the navy
-   gradient background shows through as letterboxing when ratios differ. */
-.activity-card__media img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform 0.4s ease; }
+/* cover (not contain) so every thumbnail fills the same box edge-to-edge —
+   uploaded photos come in wildly different aspect ratios, and letterboxing
+   them made the grid look inconsistent. object-position keeps the crop
+   centered, which is a reasonable default for event/portrait photos. */
+.activity-card__media img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.4s ease; }
 .activity-card__media:hover img { transform: scale(1.03); }
 .bento-item--wide .activity-card__media { height: 320px; }
 .bento-item--narrow .activity-card__media { height: 180px; }
