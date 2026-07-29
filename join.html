@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>회원신청 | AWC기업인연합회</title>
 <meta name="description" content="AWC기업인연합회 회원가입 신청서.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="subnav">
   <div class="subnav__inner">
-    <a href="index.html" class="navbar__logo">AWC기업인연합회</a>
+    <a href="index.html" class="navbar__logo"><img src="img/협회로고.png" alt="AWC기업인연합회" class="navbar__logo-img"></a>
     <a href="index.html" class="subnav__close label-md">
       <span data-icon="close"></span> 취소
     </a>
@@ -23,13 +26,13 @@
     <div style="max-width: 720px; margin: 0 auto;">
 
       <div class="text-center" style="margin-bottom: var(--section-gap);">
-        <h1 class="headline-lg" style="margin-bottom: var(--stack-md);">협회의 일원이 되어 인프라의 미래를 함께 만드세요</h1>
+        <h1 class="headline-lg" style="margin-bottom: var(--stack-md);">협회의 일원이 되어 물 인프라의 미래를 함께 만드세요</h1>
         <p class="body-lg" style="color: var(--on-surface-variant);">
           AWC기업인연합회는 관련 산업의 발전과 글로벌 네트워크 구축을 지원합니다.<br>정회원 가입을 통해 전문 자료 접근, 세미나 참석, 정책 제안 등 다양한 혜택을 누리십시오.
         </p>
       </div>
 
-      <div class="form-shell">
+      <div class="form-shell" data-reveal>
         <h2 class="headline-md">회원가입 신청서</h2>
 
         <form data-join-form novalidate>
@@ -38,7 +41,7 @@
             <div class="form-grid">
               <div class="form-field" data-form-field>
                 <label for="companyName">기업명 (Company Name) *</label>
-                <input type="text" id="companyName" name="companyName" class="input" placeholder="예: 한국인프라건설(주)" required>
+                <input type="text" id="companyName" name="companyName" class="input" placeholder="예: 한국물산업(주)" required>
                 <p class="error-msg">기업명을 입력해주세요.</p>
               </div>
               <div class="form-field" data-form-field>

@@ -4,14 +4,17 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>회원정보 | AWC기업인연합회</title>
-<meta name="description" content="인프라 구축과 미래 도시 설계를 이끌어가는 AWC기업인연합회 핵심 파트너 회원사를 소개합니다.">
+<meta name="description" content="물 인프라 구축과 미래 도시 설계를 이끌어가는 AWC기업인연합회 핵심 파트너 회원사를 소개합니다.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="navbar">
   <div class="navbar__inner">
-    <a href="index.html" class="navbar__logo">AWC기업인연합회</a>
+    <a href="index.html" class="navbar__logo"><img src="img/협회로고.png" alt="AWC기업인연합회" class="navbar__logo-img"></a>
     <nav class="navbar__links" data-nav-menu>
       <a href="index.html" class="navbar__link">협회소개</a>
       <a href="members.html" class="navbar__link is-active">회원정보</a>
@@ -36,7 +39,7 @@
     <h1 class="headline-xl text-center" style="margin-bottom: var(--stack-md);">협회와 함께하는 기업 회원</h1>
     <div style="display:flex; flex-direction: column; gap: 20px; align-items:center;">
       <p class="body-lg text-center max-w-prose" style="color: var(--on-surface-variant); margin: 0 auto;">
-        인프라 구축과 미래 도시 설계를 이끌어가는 핵심 파트너들을 소개합니다.<br>투명하고 전문적인 네트워크를 통해 지속 가능한 발전을 도모합니다.
+        물 인프라 구축과 미래 도시 설계를 이끌어가는 핵심 파트너들을 소개합니다.<br>투명하고 전문적인 네트워크를 통해 지속 가능한 발전을 도모합니다.
       </p>
       <div class="count-badge label-md">
         <span>총 회원사</span>
@@ -46,7 +49,7 @@
   </section>
 
   <section class="container" style="margin-bottom: var(--section-gap);">
-    <div class="filter-panel">
+    <div class="filter-panel" data-reveal>
       <div class="filter-grid">
         <div class="field">
           <label for="member-search">통합 검색</label>
@@ -86,7 +89,10 @@
       <!-- Rendered dynamically by js/main.js from js/data.js (DataStore) -->
     </div>
 
-    <p class="body-md empty-state" data-member-empty>검색 조건에 맞는 회원사가 없습니다.</p>
+    <div class="empty-state" data-member-empty>
+      <span data-icon="search" class="empty-state__icon"></span>
+      <p class="body-md">검색 조건에 맞는 회원사가 없습니다.</p>
+    </div>
 
     <div class="pagination" data-pagination></div>
   </section>
