@@ -1,6 +1,6 @@
 /* ==========================================================================
    AWC기업인연합회 — Design System
-   Corporate Modernism 2.0 — Deep Navy / Signal Gold / Off-White
+   Corporate Modernism 2.0 — Deep Navy / Water Cyan / Off-White
    Soft elevation, generous radius, confident type. Same component API as
    before (class names unchanged) — this pass reworks the tokens and the
    detailing of every component that consumes them.
@@ -29,10 +29,10 @@
   --on-secondary: #ffffff;
   --secondary-container: #d0e1fb;
   --on-secondary-container: #38485d;
-  --accent: #c99a3b;
-  --on-accent: #241a02;
-  --accent-container: #fbedcd;
-  --on-accent-container: #4d3a0a;
+  --accent: #0ea5c7;
+  --on-accent: #002733;
+  --accent-container: #d3f1f7;
+  --on-accent-container: #06505f;
   --error: #ba1a1a;
   --error-container: #ffdad6;
   --on-error-container: #93000a;
@@ -41,7 +41,11 @@
 
   /* Gradients */
   --gradient-primary: linear-gradient(135deg, #002d5c 0%, #0d4585 100%);
-  --gradient-accent: linear-gradient(90deg, var(--accent) 0%, #e0b563 100%);
+  --gradient-accent: linear-gradient(90deg, var(--accent) 0%, #5ce1e6 100%);
+  --gradient-band: linear-gradient(120deg, #dceffc 0%, #cdf1f7 55%, #b8ecf4 100%);
+  --gradient-band-mid: linear-gradient(120deg, #14508c 0%, #1c7fa8 55%, #3dc2dc 100%);
+  --gradient-cyan: linear-gradient(135deg, #0ea5c7 0%, #5ce1e6 100%);
+  --surface-cyan-tint: #eafafd;
 
   /* Spacing */
   --container-max: 1280px;
@@ -95,6 +99,8 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  word-break: keep-all;
+  overflow-wrap: break-word;
 }
 
 ::selection { background: var(--accent-container); color: var(--on-accent-container); }
@@ -252,7 +258,7 @@ main { flex: 1 0 auto; width: 100%; }
   color: var(--primary);
   font-weight: 700;
 }
-.navbar__link.is-active::after { right: 0; }
+.navbar__link.is-active::after { right: 0; transition: none; }
 .navbar__actions { display: flex; align-items: center; gap: 12px; }
 .navbar__toggle {
   display: flex;
@@ -345,8 +351,19 @@ main { flex: 1 0 auto; width: 100%; }
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(115deg, rgba(0,17,38,0.92) 0%, rgba(0,30,64,0.72) 40%, rgba(0,30,64,0.35) 75%, rgba(0,30,64,0.2) 100%);
+  background: linear-gradient(115deg, rgba(0,10,26,0.90) 0%, rgba(0,30,64,0.72) 40%, rgba(0,30,64,0.4) 72%, rgba(0,30,64,0.22) 100%);
 }
+.wave-divider {
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  width: 100%;
+  line-height: 0;
+  overflow: hidden;
+  z-index: 2;
+  pointer-events: none;
+}
+.wave-divider svg { display: block; width: 100%; height: 48px; }
+@media (min-width: 768px) { .wave-divider svg { height: 80px; } }
 .hero__content {
   position: relative;
   z-index: 1;
@@ -424,7 +441,8 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
 @media (prefers-reduced-motion: reduce) {
   [data-reveal] { transition: none; opacity: 1; transform: none; }
   .member-card, .activity-card { animation: none; }
-  .hero__content, .hero__bg { animation: none; }
+  .hero__content, .hero__bg, .page-header-band__bg { animation: none; }
+  .page-header-band > .container { animation: none; }
   .empty-state__icon { animation: none; }
   .hero__rule { animation: none; width: 56px; }
   .chairman__rule { transition: none; width: 48px; }
@@ -457,15 +475,84 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
 .pillar-card .icon-wrap {
   width: 56px; height: 56px;
   display: flex; align-items: center; justify-content: center;
-  background: var(--gradient-primary);
+  background: var(--gradient-cyan);
   color: var(--on-primary);
   border-radius: var(--radius);
   margin-bottom: 20px;
-  box-shadow: var(--shadow-primary);
+  box-shadow: 0 10px 24px rgba(14, 165, 199, 0.35);
   transition: transform 0.3s var(--ease);
 }
 .pillar-card:hover .icon-wrap { transform: scale(1.08) rotate(-4deg); }
 .pillar-card .icon-wrap .icon { width: 28px; height: 28px; }
+
+/* ---- Full-bleed tinted section band (alternates with the white page background) ---- */
+.section-band {
+  width: 100%;
+  background: linear-gradient(180deg, var(--surface-cyan-tint) 0%, var(--surface-container-low) 100%);
+  padding: var(--section-gap) 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ---- Vision showcase band: clean white feature section ---- */
+.vision-band {
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  background: var(--background);
+  padding: var(--section-gap) 0 calc(var(--section-gap) + 48px);
+}
+.vision-band::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 88% 78%, rgba(14,165,199,0.10) 0%, transparent 50%);
+  pointer-events: none;
+}
+.vision-band__kicker { color: var(--on-accent-container); letter-spacing: 0.14em; margin-bottom: 8px; position: relative; }
+.vision-band__title { color: var(--primary); position: relative; }
+.vision-band__subtitle { color: var(--on-surface-variant); margin-top: 8px; position: relative; }
+.vision-band__frame {
+  position: relative;
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 16px;
+}
+
+/* ---- Page header band: photo banner (same pattern as .hero__bg) atop listing pages ---- */
+.page-header-band {
+  width: 100%;
+  min-height: 460px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--gradient-band);
+}
+.page-header-band__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  animation: hero-zoom 20s var(--ease) infinite alternate;
+}
+/* Light tint — lets the photo read through more (used on activities.html,
+   the palest step of the index → members → activities intensity scale). */
+.page-header-band__bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, rgba(6,40,70,0.66) 0%, rgba(10,70,110,0.58) 45%, rgba(14,165,199,0.42) 100%);
+}
+/* Mid tint — darker/more saturated wash (members.html), between the light
+   tint above and the dark hero overlay on index.html. */
+.page-header-band--mid .page-header-band__bg::after {
+  background: linear-gradient(115deg, rgba(4,26,48,0.82) 0%, rgba(10,60,100,0.72) 45%, rgba(14,165,199,0.52) 100%);
+}
+.page-header-band > .container { position: relative; z-index: 1; width: 100%; padding-top: 56px; padding-bottom: 88px; animation: fade-up 0.7s var(--ease) both; }
 
 /* ---- Chairman section ---- */
 .chairman {
@@ -514,7 +601,7 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
   display: block;
   width: 100%;
   overflow: hidden;
-  background: linear-gradient(135deg, #16305c 0%, #3a5f94 60%, #7ea3d6 100%);
+  background: linear-gradient(135deg, #0d3a66 0%, #0e6f96 55%, #0ea5c7 100%);
 }
 .activity-card__media svg { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.4; }
 /* cover (not contain) so every thumbnail fills the same box edge-to-edge —
@@ -543,13 +630,33 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
 }
 .badge--alt { background: var(--accent-container); color: var(--on-accent-container); }
 .activity-card--text {
+  position: relative;
+  overflow: hidden;
   background: var(--surface-container-low);
   padding: 28px;
   justify-content: center;
 }
-.activity-card--text .icon { width: 32px; height: 32px; color: var(--primary); margin-bottom: 12px; }
+.activity-card--text::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gradient-cyan);
+}
+.activity-card--text > span[data-icon] {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--gradient-cyan);
+  color: var(--on-primary);
+  box-shadow: 0 8px 16px rgba(14, 165, 199, 0.32);
+  margin-bottom: 12px;
+  transition: transform 0.3s var(--ease);
+}
+.activity-card--text > span[data-icon] .icon { width: 22px; height: 22px; }
+.activity-card--text:hover > span[data-icon] { transform: scale(1.08) rotate(-4deg); }
 .link-inline {
-  color: var(--primary);
+  color: var(--accent);
   font-weight: 600;
   display: inline-flex;
   align-items: center;
@@ -560,19 +667,36 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
 .activity-card.is-hidden { display: none; }
 
 /* ---- Member cards ---- */
-.member-card { display: flex; flex-direction: column; overflow: hidden; }
+.member-card { position: relative; display: flex; flex-direction: column; overflow: hidden; }
+.member-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gradient-cyan);
+  z-index: 1;
+}
 .member-card__media {
   height: 96px;
   display: flex; align-items: center; justify-content: center;
   border-bottom: 1px solid var(--outline-variant);
-  background: var(--surface-container-low);
+  background: linear-gradient(135deg, var(--surface-container-low) 0%, var(--surface-cyan-tint) 100%);
   color: var(--primary);
   padding: 12px;
 }
-.member-card__media .icon { width: 32px; height: 32px; transition: transform 0.3s var(--ease); }
+.member-card__media .icon { width: 22px; height: 22px; transition: transform 0.3s var(--ease); }
+.member-card__media > span[data-icon] {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: var(--gradient-cyan);
+  color: var(--on-primary);
+  box-shadow: 0 8px 16px rgba(14, 165, 199, 0.32);
+  transition: transform 0.3s var(--ease);
+}
 .member-card__media img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s var(--ease); }
 .member-card:hover .member-card__media img,
-.member-card:hover .member-card__media .icon { transform: scale(1.08); }
+.member-card:hover .member-card__media > span[data-icon] { transform: scale(1.08); }
 .member-card__body { padding: 24px; display: flex; flex-direction: column; flex: 1; }
 .member-card__tags { display: flex; flex-wrap: nowrap; gap: 6px; margin-bottom: 10px; overflow-x: auto; }
 .member-card__tag {
@@ -589,7 +713,7 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
   width: fit-content;
 }
 .member-card__tag--engineering { background: #d3e4fe; color: #1f3a5c; }
-.member-card__tag--solution { background: var(--primary); color: var(--on-primary); }
+.member-card__tag--solution { background: var(--gradient-cyan); color: var(--on-primary); }
 .member-card__tag--operations { background: var(--surface-dim); color: var(--on-surface); }
 .member-card__name { margin-bottom: 16px; }
 .member-card__meta { list-style: none; margin: 0 0 20px; padding: 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
@@ -598,12 +722,27 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
 .member-card.is-hidden { display: none; }
 
 /* ---- Search / filter panel ---- */
+/* Floats up over the header band's wave divider — negative margin pulls it
+   into the band above, a common "floating search card" pattern. */
 .filter-panel {
+  position: relative;
+  z-index: 3;
+  overflow: hidden;
   background: var(--surface-container-lowest);
-  border: 1px solid var(--outline-variant);
   border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  padding: 28px 24px 24px;
+  margin-top: 32px;
+}
+@media (min-width: 768px) {
+  .filter-panel { margin-top: 40px; padding: 32px 32px 28px; }
+}
+.filter-panel::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: var(--gradient-cyan);
 }
 .filter-grid { display: grid; grid-template-columns: 1fr; gap: var(--gutter); align-items: end; }
 @media (min-width: 1024px) {
@@ -618,6 +757,8 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
   pointer-events: none;
 }
 .field-input-wrap > select ~ span[data-icon] { left: auto; right: 14px; }
+.filter-panel .input { border-radius: var(--radius-full); }
+.filter-panel .field-input-wrap input.input { padding-left: 48px; }
 .input, select.input {
   width: 100%;
   border: 1px solid var(--outline-variant);
@@ -645,7 +786,7 @@ span[data-icon] { transition: transform 0.25s var(--ease); }
   transition: transform 0.2s var(--ease), background-color 0.2s var(--ease), color 0.2s var(--ease), border-color 0.2s var(--ease), box-shadow 0.2s var(--ease);
 }
 .tag-btn:hover { background: var(--surface-container-low); color: var(--on-surface); transform: translateY(-1px); }
-.tag-btn.is-active { border-color: transparent; background: var(--gradient-primary); color: var(--on-primary); box-shadow: var(--shadow-sm); }
+.tag-btn.is-active { border-color: transparent; background: var(--gradient-cyan); color: var(--on-primary); box-shadow: var(--shadow-sm); }
 
 .count-badge {
   display: inline-flex; align-items: center; gap: 8px;
