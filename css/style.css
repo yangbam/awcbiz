@@ -935,6 +935,7 @@ legend {
 }
 .modal-overlay.is-open { display: flex; }
 .modal {
+  position: relative;
   background: var(--surface-container-lowest);
   border-radius: var(--radius-lg);
   border: 1px solid var(--outline-variant);
@@ -956,6 +957,20 @@ legend {
 }
 .modal__icon .icon { width: 36px; height: 36px; color: var(--on-primary); }
 .modal p { color: var(--on-surface-variant); margin-bottom: 32px; }
+.modal__close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  color: var(--outline);
+  transition: background-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.modal__close:hover { background: var(--surface-container-low); color: var(--on-surface); }
+.modal__close .icon { width: 18px; height: 18px; }
+.modal [data-inquiry-form] { text-align: left; }
+.modal [data-inquiry-form] .form-field + .form-field { margin-top: 16px; }
+.modal textarea.input { resize: vertical; min-height: 96px; }
 
 /* ---- Simple/transactional header (join page) ---- */
 .subnav {
