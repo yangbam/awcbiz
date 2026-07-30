@@ -554,10 +554,151 @@
     }
   }
 
+  /* ---- Footer inquiry modal + Formspree email (shared across all pages) ---- */
+  var INQUIRY_MODAL_HTML =
+    '<div class="modal-overlay" data-inquiry-modal>' +
+      '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title">' +
+        '<button type="button" class="modal__close" data-inquiry-close aria-label="닫기"><span data-icon="close"></span></button>' +
+        '<form data-inquiry-form novalidate>' +
+          '<h3 class="headline-md" id="inquiry-modal-title" style="margin-bottom: 8px;">문의하기</h3>' +
+          '<p class="body-md" style="margin-bottom: 24px;">궁금하신 사항을 남겨주시면 사무국에서 빠르게 답변드리겠습니다.</p>' +
+          '<div class="form-field" data-form-field>' +
+            '<label for="inquiryName">성명 *</label>' +
+            '<input type="text" id="inquiryName" name="inquiryName" class="input" placeholder="홍길동" required>' +
+            '<p class="error-msg">성명을 입력해주세요.</p>' +
+          '</div>' +
+          '<div class="form-field" data-form-field>' +
+            '<label for="inquiryEmail">이메일 *</label>' +
+            '<input type="email" id="inquiryEmail" name="inquiryEmail" class="input" placeholder="you@company.com" required>' +
+            '<p class="error-msg">올바른 이메일 주소를 입력해주세요.</p>' +
+          '</div>' +
+          '<div class="form-field" data-form-field>' +
+            '<label for="inquiryPhone">연락처 (선택)</label>' +
+            '<input type="tel" id="inquiryPhone" name="inquiryPhone" class="input" placeholder="010-0000-0000">' +
+          '</div>' +
+          '<div class="form-field" data-form-field>' +
+            '<label for="inquiryMessage">문의내용 *</label>' +
+            '<textarea id="inquiryMessage" name="inquiryMessage" class="input" rows="4" placeholder="문의하실 내용을 입력해주세요." required></textarea>' +
+            '<p class="error-msg">문의내용을 입력해주세요.</p>' +
+          '</div>' +
+          '<button type="submit" class="btn btn-primary btn-block" style="margin-top: 24px;">문의 보내기 <span data-icon="arrow-right"></span></button>' +
+        '</form>' +
+        '<div data-inquiry-success hidden>' +
+          '<div class="modal__icon"><span data-icon="check-circle"></span></div>' +
+          '<h3 class="headline-md" style="margin-bottom: 12px;">문의가 접수되었습니다</h3>' +
+          '<p class="body-md">빠른 시일 내에 기재하신 연락처로 답변드리겠습니다.</p>' +
+          '<button type="button" class="btn btn-primary btn-block" data-inquiry-close>확인</button>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+
+  function submitInquiryToFormspree(payload) {
+    if (!isFormspreeConfigured()) {
+      console.warn("AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 넘어갑니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
+      return Promise.resolve({ skipped: true });
+    }
+    var fd = new FormData();
+    fd.append("성명", payload.name);
+    fd.append("이메일", payload.email);
+    fd.append("연락처", payload.phone);
+    fd.append("문의내용", payload.message);
+    fd.append("_subject", "[AWC기업인연합회] 새 문의 - " + payload.name);
+
+    return fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      body: fd,
+      headers: { "Accept": "application/json" }
+    }).then(function (res) {
+      if (!res.ok) throw new Error("Formspree submit failed: " + res.status);
+      return res.json();
+    });
+  }
+
+  function initInquiryModal() {
+    var triggers = document.querySelectorAll("[data-inquiry-open]");
+    if (!triggers.length) return;
+
+    document.body.insertAdjacentHTML("beforeend", INQUIRY_MODAL_HTML);
+    var overlay = document.querySelector("[data-inquiry-modal]");
+    injectIcons(overlay);
+
+    var form = overlay.querySelector("[data-inquiry-form]");
+    var successView = overlay.querySelector("[data-inquiry-success]");
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    function openModal() {
+      form.hidden = false;
+      successView.hidden = true;
+      overlay.classList.add("is-open");
+    }
+    function closeModal() { overlay.classList.remove("is-open"); }
+
+    triggers.forEach(function (t) {
+      t.addEventListener("click", function (e) {
+        e.preventDefault();
+        openModal();
+      });
+    });
+    overlay.querySelectorAll("[data-inquiry-close]").forEach(function (btn) {
+      btn.addEventListener("click", closeModal);
+    });
+    overlay.addEventListener("click", function (e) { if (e.target === overlay) closeModal(); });
+
+    function showFieldError(field) {
+      var wrap = field.closest("[data-form-field]");
+      if (wrap) wrap.classList.add("has-error");
+    }
+    function clearFieldError(field) {
+      var wrap = field.closest("[data-form-field]");
+      if (wrap) wrap.classList.remove("has-error");
+    }
+    form.addEventListener("input", function (e) {
+      if (e.target.matches("input, textarea")) clearFieldError(e.target);
+    });
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      var valid = true;
+      form.querySelectorAll("[required]").forEach(function (field) {
+        var ok = field.value.trim() !== "";
+        if (!ok) { valid = false; showFieldError(field); }
+        else { clearFieldError(field); }
+      });
+      if (!valid) {
+        var firstError = form.querySelector(".has-error");
+        if (firstError) firstError.scrollIntoView({ behavior: "smooth", block: "center" });
+        return;
+      }
+
+      var payload = {
+        name: form.inquiryName.value.trim(),
+        email: form.inquiryEmail.value.trim(),
+        phone: form.inquiryPhone.value.trim(),
+        message: form.inquiryMessage.value.trim()
+      };
+
+      if (submitBtn) submitBtn.disabled = true;
+
+      submitInquiryToFormspree(payload)
+        .then(function () {
+          form.reset();
+          form.hidden = true;
+          successView.hidden = false;
+          if (submitBtn) submitBtn.disabled = false;
+        })
+        .catch(function (err) {
+          console.error("AWC기업인연합회: 문의 전송 실패", err);
+          alert("문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
+          if (submitBtn) submitBtn.disabled = false;
+        });
+    });
+  }
+
   document.addEventListener("DOMContentLoaded", function () {
     injectIcons();
     initNav();
     initJoinForm();
+    initInquiryModal();
     initScrollReveal();
     var ready = (window.DataStore && window.DataStore.ready) || Promise.resolve();
     ready.then(function () {
