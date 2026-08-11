@@ -1055,6 +1055,13 @@ legend {
   padding: 0; margin: -1px; overflow: hidden;
   clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+/* Honeypot spam-trap field: hidden from sighted users AND screen readers (unlike
+   .visually-hidden, which stays exposed to assistive tech). Real visitors never
+   see or fill it; bots that auto-fill every field do, which flags them as spam. */
+.hp-field {
+  position: absolute; left: -9999px; top: -9999px;
+  width: 1px; height: 1px; overflow: hidden;
+}
 
 /* ==========================================================================
    Legal documents (terms / privacy / consent)
@@ -1096,6 +1103,36 @@ legend {
    ========================================================================== */
 
 .admin-body { background: var(--surface-container-low); }
+
+/* ---- Admin password gate ---- */
+.admin-gate {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--margin-mobile);
+  background: var(--gradient-primary);
+}
+.admin-gate__box {
+  background: var(--surface-container-lowest);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--outline-variant);
+  max-width: 360px;
+  width: 100%;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: var(--shadow-lg);
+}
+.admin-gate__icon {
+  width: 64px; height: 64px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: var(--gradient-cyan);
+  box-shadow: var(--shadow-primary);
+  display: flex; align-items: center; justify-content: center;
+}
+.admin-gate__icon .icon { width: 30px; height: 30px; color: var(--on-primary); }
+.admin-gate__box .form-field { text-align: left; }
 
 .admin-topbar {
   width: 100%;
