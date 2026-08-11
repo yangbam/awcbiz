@@ -12,6 +12,21 @@
 </head>
 <body class="admin-body">
 
+<div class="admin-gate" data-admin-gate>
+  <form class="admin-gate__box" data-admin-gate-form novalidate>
+    <div class="admin-gate__icon"><span data-icon="settings"></span></div>
+    <h1 class="headline-md" style="margin-bottom: 8px;">관리자 페이지</h1>
+    <p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 24px;">비밀번호를 입력해주세요.</p>
+    <div class="form-field" data-form-field>
+      <input type="password" id="admin-gate-password" name="password" class="input" placeholder="비밀번호" autocomplete="current-password" required>
+      <p class="error-msg" data-admin-gate-error>비밀번호가 올바르지 않습니다.</p>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 16px;">입장하기</button>
+  </form>
+</div>
+
+<div data-admin-content hidden>
+
 <header class="admin-topbar">
   <div class="admin-topbar__inner">
     <div class="admin-topbar__title">
@@ -24,8 +39,8 @@
 </header>
 
 <p class="admin-notice">
-  이 페이지는 사이트 메뉴 어디에도 연결되어 있지 않으며, URL(management.html)을 직접 입력해야 접근할 수 있습니다.
-  단, 별도 로그인 절차는 없고 데이터는 <strong>이 브라우저에만</strong> 저장되므로 실제 운영 시에는 URL 노출에 주의하세요.
+  이 페이지는 사이트 메뉴 어디에도 연결되어 있지 않으며, 비밀번호 입력 후에만 접근할 수 있습니다.
+  단, 서버 인증이 아닌 브라우저 내 간이 확인 절차이며 데이터는 <strong>이 브라우저에만</strong> 저장되므로 실제 운영 시에는 URL과 비밀번호 노출에 주의하세요.
 </p>
 
 <main>
@@ -317,6 +332,8 @@
 
   </div>
 </main>
+
+</div>
 
 <script src="js/data.js"></script>
 <script src="js/main.js"></script>
