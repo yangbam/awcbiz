@@ -5,6 +5,128 @@
    localStorage, there is no server/auth behind this page.
    ========================================================================== */
 
+/* ---- Password gate ----
+   Client-side only — there is no backend/DB (this site is published as
+   static files to a git host), so this can never be real authentication:
+   the check runs in this file, which anyone can read via "view source",
+   and the data behind the gate is still fetched into the page regardless.
+   This is only a deterrent against casual/accidental access, raised via:
+     1. Comparing a SHA-256 hash instead of the plaintext password, so
+        "view source" doesn't hand the password to a casual reader directly
+        (a determined attacker can still copy the hash and brute-force it
+        offline — pick a long, non-guessable password, not a short PIN).
+     2. A short client-side lockout after repeated wrong guesses, to slow
+        down anyone trying passwords by hand through the form itself.
+   To change the password: open browser devtools console on any page and run
+     crypto.subtle.digest("SHA-256", new TextEncoder().encode("새 비밀번호"))
+       .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2,"0")).join("")))
+   then paste the printed hex string into ADMIN_PASSWORD_HASH below. */
+(function () {
+  "use strict";
+
+  var ADMIN_PASSWORD_HASH = "2a68f6a75db74bf826003d4b3d3480e049bb74cfff5e9985657fd52f6e76aab3"; // current password, hashed — replace via the console snippet above
+  var SESSION_KEY = "ipa_admin_authed";
+  var ATTEMPTS_KEY = "ipa_admin_login_attempts";
+  var MAX_ATTEMPTS = 5;
+  var LOCKOUT_MS = 30 * 1000;
+
+  function hashHex(text) {
+    return crypto.subtle.digest("SHA-256", new TextEncoder().encode(text)).then(function (buf) {
+      return Array.prototype.map.call(new Uint8Array(buf), function (b) { return b.toString(16).padStart(2, "0"); }).join("");
+    });
+  }
+
+  function getAttempts() {
+    try { return JSON.parse(localStorage.getItem(ATTEMPTS_KEY)) || { count: 0, lockedUntil: 0 }; }
+    catch (e) { return { count: 0, lockedUntil: 0 }; }
+  }
+  function setAttempts(state) {
+    try { localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(state)); } catch (e) { /* ignore */ }
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    var gate = document.querySelector("[data-admin-gate]");
+    var content = document.querySelector("[data-admin-content]");
+    if (!gate || !content) return;
+
+    var form = gate.querySelector("[data-admin-gate-form]");
+    var passwordInput = document.getElementById("admin-gate-password");
+    var fieldWrap = passwordInput.closest("[data-form-field]");
+    var errorMsg = gate.querySelector("[data-admin-gate-error]");
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    function unlock() {
+      setAttempts({ count: 0, lockedUntil: 0 });
+      sessionStorage.setItem(SESSION_KEY, "1");
+      gate.style.display = "none";
+      content.hidden = false;
+    }
+
+    if (sessionStorage.getItem(SESSION_KEY) === "1") {
+      unlock();
+      return;
+    }
+
+    if (!window.crypto || !window.crypto.subtle) {
+      if (errorMsg) { errorMsg.textContent = "이 페이지는 보안 연결(HTTPS)에서만 열 수 있습니다."; fieldWrap.classList.add("has-error"); }
+      if (submitBtn) submitBtn.disabled = true;
+      passwordInput.disabled = true;
+      return;
+    }
+
+    function applyLockUi() {
+      var state = getAttempts();
+      var remainingMs = state.lockedUntil - Date.now();
+      if (remainingMs > 0) {
+        passwordInput.disabled = true;
+        if (submitBtn) submitBtn.disabled = true;
+        if (errorMsg) errorMsg.textContent = "너무 많은 시도가 있었습니다. " + Math.ceil(remainingMs / 1000) + "초 후 다시 시도해주세요.";
+        if (fieldWrap) fieldWrap.classList.add("has-error");
+        setTimeout(applyLockUi, 1000);
+        return true;
+      }
+      passwordInput.disabled = false;
+      if (submitBtn) submitBtn.disabled = false;
+      if (errorMsg) errorMsg.textContent = "비밀번호가 올바르지 않습니다.";
+      if (fieldWrap) fieldWrap.classList.remove("has-error");
+      return false;
+    }
+
+    if (applyLockUi()) return;
+    passwordInput.focus();
+
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (applyLockUi()) return;
+
+      if (submitBtn) submitBtn.disabled = true;
+      hashHex(passwordInput.value).then(function (hex) {
+        if (hex === ADMIN_PASSWORD_HASH) {
+          unlock();
+          return;
+        }
+        var state = getAttempts();
+        state.count += 1;
+        if (state.count >= MAX_ATTEMPTS) {
+          state.lockedUntil = Date.now() + LOCKOUT_MS;
+          state.count = 0;
+        }
+        setAttempts(state);
+        if (errorMsg) errorMsg.textContent = "비밀번호가 올바르지 않습니다.";
+        if (fieldWrap) fieldWrap.classList.add("has-error");
+        passwordInput.value = "";
+        passwordInput.focus();
+        if (submitBtn) submitBtn.disabled = false;
+        applyLockUi();
+      });
+    });
+
+    passwordInput.addEventListener("input", function () {
+      if (fieldWrap) fieldWrap.classList.remove("has-error");
+    });
+  });
+})();
+
 (function () {
   "use strict";
 

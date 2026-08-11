@@ -454,6 +454,7 @@
     fd.append("전문분야", checkedInterests.map(function (v) { return FORMSPREE_INTEREST_LABEL[v] || v; }).join(", "));
     fd.append("주요분야", form.mainField.value.trim());
     fd.append("_subject", "[AWC기업인연합회] 새 회원신청 - " + form.companyName.value.trim());
+    fd.append("_gotcha", form._gotcha ? form._gotcha.value : "");
 
     return fetch(FORMSPREE_ENDPOINT, {
       method: "POST",
@@ -510,6 +511,13 @@
         return;
       }
 
+      if (form._gotcha && form._gotcha.value.trim() !== "") {
+        // Honeypot triggered — silently pretend success so the bot doesn't adapt.
+        openModal();
+        form.reset();
+        return;
+      }
+
       var finish = function () {
         if (window.DataStore) {
           try {
@@ -560,6 +568,10 @@
       '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title">' +
         '<button type="button" class="modal__close" data-inquiry-close aria-label="닫기"><span data-icon="close"></span></button>' +
         '<form data-inquiry-form novalidate>' +
+          '<div class="hp-field" aria-hidden="true">' +
+            '<label for="inquiry-hp">이 필드는 비워두세요</label>' +
+            '<input type="text" id="inquiry-hp" name="_gotcha" tabindex="-1" autocomplete="off">' +
+          '</div>' +
           '<h3 class="headline-md" id="inquiry-modal-title" style="margin-bottom: 8px;">문의하기</h3>' +
           '<p class="body-md" style="margin-bottom: 24px;">궁금하신 사항을 남겨주시면 사무국에서 빠르게 답변드리겠습니다.</p>' +
           '<div class="form-field" data-form-field>' +
@@ -603,6 +615,7 @@
     fd.append("연락처", payload.phone);
     fd.append("문의내용", payload.message);
     fd.append("_subject", "[AWC기업인연합회] 새 문의 - " + payload.name);
+    fd.append("_gotcha", payload.gotcha || "");
 
     return fetch(FORMSPREE_ENDPOINT, {
       method: "POST",
@@ -670,11 +683,20 @@
         return;
       }
 
+      if (form._gotcha && form._gotcha.value.trim() !== "") {
+        // Honeypot triggered — silently pretend success so the bot doesn't adapt.
+        form.reset();
+        form.hidden = true;
+        successView.hidden = false;
+        return;
+      }
+
       var payload = {
         name: form.inquiryName.value.trim(),
         email: form.inquiryEmail.value.trim(),
         phone: form.inquiryPhone.value.trim(),
-        message: form.inquiryMessage.value.trim()
+        message: form.inquiryMessage.value.trim(),
+        gotcha: form._gotcha ? form._gotcha.value : ""
       };
 
       if (submitBtn) submitBtn.disabled = true;
