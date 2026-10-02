@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Members | AWC Business Association</title>
+<meta name="description" content="Meet the member companies driving AWC Business Association's water infrastructure development and future city design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="index.html" class="navbar__logo"><img src="../img/logo_eng.png" alt="AWC Business Association" class="navbar__logo-img"></a>
+    <nav class="navbar__links" data-nav-menu>
+      <a href="index.html" class="navbar__link">About Us</a>
+      <a href="members.html" class="navbar__link is-active">Members</a>
+      <a href="activities.html" class="navbar__link">Activities</a>
+    </nav>
+    <div class="navbar__actions">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a href="../members.html" class="lang-switch__option">KOR</a>
+        <a href="members.html" class="lang-switch__option is-active" aria-current="page">ENG</a>
+      </div>
+      <a href="join.html" class="btn btn-primary">Join Us</a>
+      <button class="navbar__toggle" type="button" data-nav-toggle aria-label="Open menu" aria-expanded="false">
+        <span data-icon="menu"></span>
+      </button>
+    </div>
+  </div>
+  <nav class="navbar__mobile-menu" data-nav-menu>
+    <a href="index.html" class="navbar__link">About Us</a>
+    <a href="members.html" class="navbar__link is-active">Members</a>
+    <a href="activities.html" class="navbar__link">Activities</a>
+    <div class="navbar__mobile-lang">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a href="../members.html" class="lang-switch__option">KOR</a>
+        <a href="members.html" class="lang-switch__option is-active" aria-current="page">ENG</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <section class="page-header-band page-header-band--mid">
+    <div class="page-header-band__bg" style="background-image: url('../img/회원정보.png');" role="img" aria-label="AWC Business Association member water treatment facilities"></div>
+    <div class="container text-center">
+      <h1 class="headline-xl" style="margin-bottom: var(--stack-md); color: var(--on-primary);">Corporate Members Building the Association Together</h1>
+      <div style="display:flex; flex-direction: column; gap: 20px; align-items:center;">
+        <p class="body-lg max-w-prose" style="color: rgba(255,255,255,0.88); margin: 0 auto;">
+          Introducing the core partners leading the way in water infrastructure development and future city design.<br>We pursue sustainable growth through a transparent, professional network.
+        </p>
+        <div class="count-badge label-md">
+          <span>Total members</span>
+          <strong data-member-total>0</strong>
+        </div>
+      </div>
+    </div>
+    <div class="wave-divider" aria-hidden="true">
+      <svg viewBox="0 0 1440 100" preserveAspectRatio="none"><path d="M0,48 C240,10 480,80 720,40 C960,0 1200,90 1440,32 L1440,100 L0,100 Z" fill="var(--background)"></path></svg>
+    </div>
+  </section>
+
+  <section class="container" style="margin-bottom: var(--section-gap);">
+    <div class="filter-panel" data-reveal>
+      <div class="filter-grid">
+        <div class="field">
+          <label for="member-search">Search</label>
+          <div class="field-input-wrap">
+            <span data-icon="search"></span>
+            <input type="text" id="member-search" class="input" placeholder="Search by company, representative, or field..." data-member-search>
+          </div>
+        </div>
+        <div class="field">
+          <label for="category-filter">Filter by field</label>
+          <div class="field-input-wrap">
+            <select id="category-filter" class="input" data-member-category>
+              <option value="all">All</option>
+              <option value="engineering">Engineering</option>
+              <option value="solution">Solution</option>
+              <option value="operations">Operations &amp; Management</option>
+            </select>
+            <span data-icon="chevron-down"></span>
+          </div>
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button type="button" class="btn btn-primary btn-block" data-member-apply>Apply</button>
+        </div>
+      </div>
+      <div class="tag-row">
+        <button type="button" class="tag-btn is-active" data-member-tag="all">All</button>
+        <button type="button" class="tag-btn" data-member-tag="engineering">Engineering</button>
+        <button type="button" class="tag-btn" data-member-tag="solution">Solution</button>
+        <button type="button" class="tag-btn" data-member-tag="operations">Operations &amp; Management</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" style="margin-bottom: var(--section-gap);">
+    <div class="grid grid-members" data-member-grid>
+      <!-- Rendered dynamically by js/main.js from js/data.js (DataStore) -->
+    </div>
+
+    <div class="empty-state" data-member-empty>
+      <span data-icon="search" class="empty-state__icon"></span>
+      <p class="body-md">No member companies match your search.</p>
+    </div>
+
+    <div class="pagination" data-pagination></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <div class="site-footer__brand">AWC Business Association</div>
+      <p class="site-footer__desc">© 2026 AWC Business Association. All rights reserved.</p>
+      <p class="site-footer__desc">AWC Business Association Secretariat email: <a href="mailto:awcbiz@awcbiz.org">awcbiz@awcbiz.org</a></p>
+    </div>
+    <div class="site-footer__links">
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="#" data-inquiry-open>Contact Us</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/data.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

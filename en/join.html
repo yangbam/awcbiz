@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Join Us | AWC Business Association</title>
+<meta name="description" content="Membership application form for AWC Business Association.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="subnav">
+  <div class="subnav__inner">
+    <a href="index.html" class="navbar__logo"><img src="../img/logo_eng.png" alt="AWC Business Association" class="navbar__logo-img"></a>
+    <div class="lang-switch" role="group" aria-label="Language">
+      <a href="../join.html" class="lang-switch__option">KOR</a>
+      <a href="join.html" class="lang-switch__option is-active" aria-current="page">ENG</a>
+    </div>
+    <a href="index.html" class="subnav__close label-md">
+      <span data-icon="close"></span> Cancel
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="container section">
+    <div style="max-width: 720px; margin: 0 auto;">
+
+      <div class="text-center" style="margin-bottom: var(--section-gap);">
+        <h1 class="headline-lg" style="margin-bottom: var(--stack-md);">Join Us and Help Shape the Future of Water Infrastructure</h1>
+        <p class="body-lg" style="color: var(--on-surface-variant);">
+          AWC Business Association supports the growth of the water infrastructure industry and the development of a global network.<br>Become a full member to access expert resources, attend seminars, and take part in policy proposals, among other benefits.
+        </p>
+      </div>
+
+      <div class="form-shell" data-reveal>
+        <h2 class="headline-md">Membership Application</h2>
+
+        <form data-join-form novalidate>
+          <div class="hp-field" aria-hidden="true">
+            <label for="join-hp">Leave this field blank</label>
+            <input type="text" id="join-hp" name="_gotcha" tabindex="-1" autocomplete="off">
+          </div>
+          <fieldset>
+            <legend>Company Information</legend>
+            <div class="form-grid">
+              <div class="form-field" data-form-field>
+                <label for="companyName">Company Name *</label>
+                <input type="text" id="companyName" name="companyName" class="input" placeholder="e.g. Korea Water Industry Co., Ltd." required>
+                <p class="error-msg">Please enter your company name.</p>
+              </div>
+              <div class="form-field" data-form-field>
+                <label for="representative">Representative *</label>
+                <input type="text" id="representative" name="representative" class="input" placeholder="John Doe" required>
+                <p class="error-msg">Please enter the representative's name.</p>
+              </div>
+              <div class="form-field full" data-form-field>
+                <label for="website">Company Website (optional)</label>
+                <input type="url" id="website" name="website" class="input" placeholder="https://www.company.com">
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Contact Information</legend>
+            <div class="form-grid">
+              <div class="form-field" data-form-field>
+                <label for="contactName">Contact Person *</label>
+                <input type="text" id="contactName" name="contactName" class="input" placeholder="Jane Smith" required>
+                <p class="error-msg">Please enter the contact person's name.</p>
+              </div>
+              <div class="form-field" data-form-field>
+                <label for="contactEmail">Email *</label>
+                <input type="email" id="contactEmail" name="contactEmail" class="input" placeholder="manager@company.com" required>
+                <p class="error-msg">Please enter a valid email address.</p>
+              </div>
+              <div class="form-field full" data-form-field>
+                <label for="contactPhone">Phone Number *</label>
+                <input type="tel" id="contactPhone" name="contactPhone" class="input" placeholder="+82 10-0000-0000" required>
+                <p class="error-msg">Please enter a phone number.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Area of Expertise</legend>
+            <div class="form-field" data-form-field>
+              <label>Select the field(s) that best match your business (multiple selections allowed) *</label>
+              <div class="checkbox-group">
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="engineering">
+                  Engineering
+                </label>
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="solution">
+                  Solution
+                </label>
+                <label class="checkbox-chip">
+                  <input type="checkbox" name="interestField" value="operations">
+                  Operations &amp; Management
+                </label>
+              </div>
+              <p class="error-msg">Please select at least one field.</p>
+            </div>
+            <div class="form-field" data-form-field style="margin-top: var(--stack-md);">
+              <label for="mainField">Main Field *</label>
+              <input type="text" id="mainField" name="mainField" class="input" placeholder="e.g. Large-scale bridge and tunnel design" required>
+              <p class="error-msg">Please enter your main field.</p>
+            </div>
+          </fieldset>
+
+          <div class="form-submit-wrap">
+            <div class="checkbox-row">
+              <input type="checkbox" id="agreeTerms" name="agreeTerms" required>
+              <label for="agreeTerms" class="body-md">I agree to the <a href="terms.html" target="_blank" rel="noopener noreferrer">Terms of Service</a> and <a href="privacy.html" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</label>
+            </div>
+            <div class="checkbox-row">
+              <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required>
+              <label for="agreePrivacy" class="body-md">I agree to the <a href="privacy-consent.html" target="_blank" rel="noopener noreferrer">collection and use of personal information</a>.</label>
+            </div>
+            <button type="submit" class="btn btn-primary" style="min-width: 200px;">Submit Application <span data-icon="arrow-right"></span></button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <div class="site-footer__brand">AWC Business Association</div>
+      <p class="site-footer__desc">© 2026 AWC Business Association. All rights reserved.</p>
+      <p class="site-footer__desc">AWC Business Association Secretariat email: <a href="mailto:awcbiz@awcbiz.org">awcbiz@awcbiz.org</a></p>
+    </div>
+    <div class="site-footer__links">
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="#" data-inquiry-open>Contact Us</a>
+    </div>
+  </div>
+</footer>
+
+<div class="modal-overlay" data-success-modal>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal__icon"><span data-icon="check-circle"></span></div>
+    <h3 class="headline-md" id="modal-title" style="margin-bottom: 12px;">Your application has been submitted</h3>
+    <p class="body-md">We will review your application and contact you<br>using the details you provided.</p>
+    <button type="button" class="btn btn-primary btn-block" data-modal-close>OK</button>
+  </div>
+</div>
+
+<script src="../js/data.js"></script>
+<script src="../js/main.js"></script>
+</body>
+</html>

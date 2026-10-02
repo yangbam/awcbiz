@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activity Detail | AWC Business Association</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="navbar">
+  <div class="navbar__inner">
+    <a href="index.html" class="navbar__logo"><img src="../img/logo_eng.png" alt="AWC Business Association" class="navbar__logo-img"></a>
+    <nav class="navbar__links" data-nav-menu>
+      <a href="index.html" class="navbar__link">About Us</a>
+      <a href="members.html" class="navbar__link">Members</a>
+      <a href="activities.html" class="navbar__link is-active">Activities</a>
+    </nav>
+    <div class="navbar__actions">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a href="../activity-detail.html" class="lang-switch__option" data-lang-link="ko">KOR</a>
+        <a href="activity-detail.html" class="lang-switch__option is-active" aria-current="page" data-lang-link="en">ENG</a>
+      </div>
+      <a href="join.html" class="btn btn-primary">Join Us</a>
+      <button class="navbar__toggle" type="button" data-nav-toggle aria-label="Open menu" aria-expanded="false">
+        <span data-icon="menu"></span>
+      </button>
+    </div>
+  </div>
+  <nav class="navbar__mobile-menu" data-nav-menu>
+    <a href="index.html" class="navbar__link">About Us</a>
+    <a href="members.html" class="navbar__link">Members</a>
+    <a href="activities.html" class="navbar__link is-active">Activities</a>
+    <div class="navbar__mobile-lang">
+      <div class="lang-switch" role="group" aria-label="Language">
+        <a href="../activity-detail.html" class="lang-switch__option" data-lang-link="ko">KOR</a>
+        <a href="activity-detail.html" class="lang-switch__option is-active" aria-current="page" data-lang-link="en">ENG</a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="container section" data-activity-detail>
+    <!-- Rendered dynamically by js/activity-detail.js from js/data.js (DataStore) -->
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="container">
+    <div>
+      <div class="site-footer__brand">AWC Business Association</div>
+      <p class="site-footer__desc">© 2026 AWC Business Association. All rights reserved.</p>
+      <p class="site-footer__desc">AWC Business Association Secretariat email: <a href="mailto:awcbiz@awcbiz.org">awcbiz@awcbiz.org</a></p>
+    </div>
+    <div class="site-footer__links">
+      <a href="terms.html">Terms of Service</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="#" data-inquiry-open>Contact Us</a>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/data.js"></script>
+<script src="../js/main.js"></script>
+<script src="../js/activity-detail.js"></script>
+</body>
+</html>
