@@ -22,17 +22,23 @@
     applications: "ipa_applications_v1"
   };
 
+  /* English pages live one level down, under /en/, so every root-relative
+     data path needs a "../" prefix there. Keeps data.js usable unmodified
+     from both the Korean pages at the site root and their /en/ counterparts. */
+  var IS_EN = document.documentElement.lang === "en";
+  var BASE_PREFIX = IS_EN ? "../" : "";
+
   var DATA_URLS = {
-    members: "data/members.json",
-    activities: "data/activities.json"
+    members: BASE_PREFIX + "data/" + (IS_EN ? "members_en.json" : "members.json"),
+    activities: BASE_PREFIX + "data/" + (IS_EN ? "activities_en.json" : "activities.json")
   };
 
-  /* Used only if data/members.json or data/activities.json can't be fetched —
-     e.g. the site was opened directly as a file:// page (fetch of local
-     files is blocked by the browser) instead of through a web server.
-     Kept as a full, up-to-date copy of the JSON files so the fallback never
-     silently shows fewer members/activities than what's actually published. */
-  var FALLBACK_MEMBERS = [
+  /* Used only if the data/*.json files can't be fetched — e.g. the site was
+     opened directly as a file:// page (fetch of local files is blocked by
+     the browser) instead of through a web server. Kept as a full, up-to-date
+     copy of the JSON files so the fallback never silently shows fewer
+     members/activities than what's actually published. */
+  var FALLBACK_MEMBERS_KO = [
     { id: "m1", name: "(주)대한인프라엔지니어링", rep: "김철수", category: ["engineering"], field: "대규모 교량 및 터널 설계", location: "서울 강남구", website: "" },
     { id: "m2", name: "스마트시티솔루션스", rep: "이영희", category: ["solution"], field: "스마트 인프라 관제 시스템", location: "경기 성남시", website: "" },
     { id: "m3", name: "글로벌인프라운영", rep: "박민준", category: ["operations"], field: "시설물 유지관리 및 진단", location: "서울 중구", website: "" },
@@ -43,7 +49,7 @@
     { id: "m8", name: "스마트그리드테크", rep: "임채원", category: ["solution"], field: "지능형 전력망 제어 솔루션", location: "광주 북구", website: "" },
     { id: "m9", name: "도시환경매니지먼트", rep: "송민호", category: ["operations"], field: "수처리 시설 운영 및 관리", location: "대구 수성구", website: "" }
   ];
-  var FALLBACK_ACTIVITIES = [
+  var FALLBACK_ACTIVITIES_KO = [
     { id: "a1", date: "2024-03-15", category: "포럼", title: "2024 스마트 시티 인프라 포럼", description: "미래형 스마트 시티 구축을 위한 인프라 기술 동향과 정책 방향을 논의하는 자리를 가졌습니다. 정부 관계자 및 산학연 전문가 200여 명이 참석하여 실효성 있는 대안을 모색했습니다." },
     { id: "a2", date: "2024-02-28", category: "연구보고", title: "노후 인프라 개선 방안 연구", description: "국내 노후 교량 및 터널의 안전성 평가 기준 재정립을 위한 정책 연구 보고서를 발간했습니다." },
     { id: "a3", date: "2023-11-10", category: "세미나", title: "교량 안전 진단 기술 세미나", description: "최신 비파괴 검사 기술을 활용한 교량 안전 진단 방법론을 공유하고 실무 적용 사례를 분석했습니다." },
@@ -53,6 +59,32 @@
     { id: "a7", date: "2023-03-02", category: "연구보고", title: "스마트 항만 자동화 기술 백서 발간", description: "항만 물류 자동화 및 무인화 기술 도입 현황을 정리한 산업 백서를 발간했습니다." },
     { id: "a8", date: "2023-01-20", category: "총회", title: "2023년도 정기총회 개최", description: "신임 이사진 선출 및 연간 사업 계획을 심의·의결하였습니다." }
   ];
+  /* English mirror of the two fallback arrays above — same placeholder
+     entries, kept in sync by hand since they only ever appear when the
+     JSON fetch itself has failed. */
+  var FALLBACK_MEMBERS_EN = [
+    { id: "m1", name: "Korea Infra Engineering Co., Ltd.", rep: "Cheolsu Kim", category: ["engineering"], field: "Large-scale bridge and tunnel design", location: "Gangnam-gu, Seoul", website: "" },
+    { id: "m2", name: "Smart City Solutions", rep: "Younghee Lee", category: ["solution"], field: "Smart infrastructure monitoring systems", location: "Seongnam, Gyeonggi", website: "" },
+    { id: "m3", name: "Global Infra Operations", rep: "Minjun Park", category: ["operations"], field: "Facility maintenance and diagnostics", location: "Jung-gu, Seoul", website: "" },
+    { id: "m4", name: "Future City Construction Co., Ltd.", rep: "Jihoon Choi", category: ["engineering"], field: "Smart road and bridge design", location: "Haeundae-gu, Busan", website: "" },
+    { id: "m5", name: "Eco Energy Systems", rep: "Sujin Jeong", category: ["solution"], field: "Integrated renewable energy management", location: "Yuseong-gu, Daejeon", website: "" },
+    { id: "m6", name: "K-Infra Care", rep: "Sangwoo Han", category: ["operations"], field: "Public facility safety diagnostics", location: "Yeonsu-gu, Incheon", website: "" },
+    { id: "m7", name: "Global Civil Design", rep: "Dongwon Kang", category: ["engineering"], field: "Port and marine structure design", location: "Nam-gu, Ulsan", website: "" },
+    { id: "m8", name: "Smart Grid Tech", rep: "Chaewon Lim", category: ["solution"], field: "Intelligent power grid control solutions", location: "Buk-gu, Gwangju", website: "" },
+    { id: "m9", name: "Urban Environment Management", rep: "Minho Song", category: ["operations"], field: "Water treatment facility operation and management", location: "Suseong-gu, Daegu", website: "" }
+  ];
+  var FALLBACK_ACTIVITIES_EN = [
+    { id: "a1", date: "2024-03-15", category: "Forum", title: "2024 Smart City Infrastructure Forum", description: "Held a forum discussing infrastructure technology trends and policy directions for building the smart cities of the future, with around 200 government officials and industry-academia-research experts in attendance." },
+    { id: "a2", date: "2024-02-28", category: "Research Report", title: "Study on Improving Aging Infrastructure", description: "Published a policy research report on re-establishing safety assessment standards for Korea's aging bridges and tunnels." },
+    { id: "a3", date: "2023-11-10", category: "Seminar", title: "Bridge Safety Diagnostics Technology Seminar", description: "Shared bridge safety diagnostic methodologies using the latest non-destructive testing technologies and analyzed real-world application cases." },
+    { id: "a4", date: "2023-09-05", category: "General Assembly", title: "3rd Board Meeting and Extraordinary General Assembly", description: "Approved the 2024 business plan and resolved on the admission of new member companies." },
+    { id: "a5", date: "2023-07-22", category: "Project", title: "Advisory on Expanding the Metropolitan Transit Network", description: "Conducted a technical feasibility review and advisory for the efficient design of a wide-area transit network." },
+    { id: "a6", date: "2023-05-18", category: "Seminar", title: "Eco-Friendly Construction Materials Seminar", description: "Shared field application cases of low-carbon construction materials and discussed future standardization directions." },
+    { id: "a7", date: "2023-03-02", category: "Research Report", title: "Smart Port Automation Technology White Paper Published", description: "Published an industry white paper summarizing the status of automation and unmanned technology adoption in port logistics." },
+    { id: "a8", date: "2023-01-20", category: "General Assembly", title: "2023 Regular General Assembly Held", description: "Elected new board members and deliberated and resolved on the annual business plan." }
+  ];
+  var FALLBACK_MEMBERS = IS_EN ? FALLBACK_MEMBERS_EN : FALLBACK_MEMBERS_KO;
+  var FALLBACK_ACTIVITIES = IS_EN ? FALLBACK_ACTIVITIES_EN : FALLBACK_ACTIVITIES_KO;
 
   /* Populated once the fetch in `ready` resolves; used as the seed for the
      localStorage-backed draft copies (getMembers/getActivities below). */
@@ -70,11 +102,15 @@
 
   var ready = Promise.all([
     fetchJson(DATA_URLS.members).catch(function (err) {
-      console.warn("AWC기업인연합회: data/members.json을 불러오지 못해 내장된 기본 데이터를 사용합니다. (file://로 열었다면 로컬 서버로 실행해보세요)", err);
+      console.warn(IS_EN
+        ? "AWC Business Association: could not load " + DATA_URLS.members + ", falling back to built-in sample data. (If this was opened as a file:// page, try serving it from a local web server instead.)"
+        : "AWC기업인연합회: " + DATA_URLS.members + "을(를) 불러오지 못해 내장된 기본 데이터를 사용합니다. (file://로 열었다면 로컬 서버로 실행해보세요)", err);
       return FALLBACK_MEMBERS;
     }),
     fetchJson(DATA_URLS.activities).catch(function (err) {
-      console.warn("AWC기업인연합회: data/activities.json을 불러오지 못해 내장된 기본 데이터를 사용합니다. (file://로 열었다면 로컬 서버로 실행해보세요)", err);
+      console.warn(IS_EN
+        ? "AWC Business Association: could not load " + DATA_URLS.activities + ", falling back to built-in sample data. (If this was opened as a file:// page, try serving it from a local web server instead.)"
+        : "AWC기업인연합회: " + DATA_URLS.activities + "을(를) 불러오지 못해 내장된 기본 데이터를 사용합니다. (file://로 열었다면 로컬 서버로 실행해보세요)", err);
       return FALLBACK_ACTIVITIES;
     })
   ]).then(function (results) {

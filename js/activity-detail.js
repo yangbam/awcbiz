@@ -6,9 +6,20 @@
 (function () {
   "use strict";
 
-  var ALT_BADGE_CATEGORIES = ["연구보고", "프로젝트"];
+  var IS_EN = document.documentElement.lang === "en";
+  var ALT_BADGE_CATEGORIES = IS_EN ? ["Research Report", "Project"] : ["연구보고", "프로젝트"];
 
   document.addEventListener("DOMContentLoaded", function () {
+    /* The ko/en datasets share the same activity ids, so the KOR/ENG switch
+       in the navbar can deep-link straight to the same article in the other
+       language — carry the current ?id= over onto both lang-switch links. */
+    var currentId = new URLSearchParams(window.location.search).get("id");
+    if (currentId) {
+      document.querySelectorAll("[data-lang-link]").forEach(function (a) {
+        a.href = a.getAttribute("href").split("?")[0] + "?id=" + encodeURIComponent(currentId);
+      });
+    }
+
     var root = document.querySelector("[data-activity-detail]");
     if (!root || !window.DataStore || !window.IPA) return;
 
@@ -24,17 +35,22 @@
       var item = id ? window.DataStore.getPublishedActivities().filter(function (a) { return a.id === id; })[0] : null;
 
       if (!item) {
-        root.innerHTML =
-          '<div class="text-center" style="padding: 64px 0;">' +
-          '<h1 class="headline-lg" style="margin-bottom: var(--stack-md);">활동을 찾을 수 없습니다</h1>' +
-          '<p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 32px;">삭제되었거나 잘못된 주소일 수 있습니다.</p>' +
-          '<a href="activities.html" class="btn btn-primary">활동이력으로 돌아가기</a>' +
-          "</div>";
+        root.innerHTML = IS_EN
+          ? ('<div class="text-center" style="padding: 64px 0;">' +
+              '<h1 class="headline-lg" style="margin-bottom: var(--stack-md);">Activity not found</h1>' +
+              '<p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 32px;">This activity may have been removed, or the link may be incorrect.</p>' +
+              '<a href="activities.html" class="btn btn-primary">Back to Activities</a>' +
+              "</div>")
+          : ('<div class="text-center" style="padding: 64px 0;">' +
+              '<h1 class="headline-lg" style="margin-bottom: var(--stack-md);">활동을 찾을 수 없습니다</h1>' +
+              '<p class="body-md" style="color: var(--on-surface-variant); margin-bottom: 32px;">삭제되었거나 잘못된 주소일 수 있습니다.</p>' +
+              '<a href="activities.html" class="btn btn-primary">활동이력으로 돌아가기</a>' +
+              "</div>");
         root.classList.add("fade-in-up");
         return;
       }
 
-      document.title = item.title + " | AWC기업인연합회";
+      document.title = item.title + (IS_EN ? " | AWC Business Association" : " | AWC기업인연합회");
 
       var badgeClass = ALT_BADGE_CATEGORIES.indexOf(item.category) !== -1 ? "badge badge--alt" : "badge";
       /* No forced height here — the photo is never cropped, it's simply
@@ -46,11 +62,12 @@
         ? '<div class="body-lg" style="white-space: pre-wrap; color: var(--on-surface); margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--outline-variant);">' + esc(item.detail) + "</div>"
         : "";
       var attachmentHtml = item.attachmentDataUrl
-        ? '<div style="margin-top: 32px;"><a href="' + item.attachmentDataUrl + '" download="' + esc(item.attachmentName || "attachment") + '" class="btn btn-secondary"><span data-icon="download"></span> ' + esc(item.attachmentName || "첨부파일") + " 다운로드</a></div>"
+        ? ('<div style="margin-top: 32px;"><a href="' + item.attachmentDataUrl + '" download="' + esc(item.attachmentName || "attachment") + '" class="btn btn-secondary"><span data-icon="download"></span> ' +
+            esc(item.attachmentName || (IS_EN ? "Attachment" : "첨부파일")) + (IS_EN ? " download" : " 다운로드") + "</a></div>")
         : "";
 
       root.innerHTML =
-        '<a href="activities.html" class="link-inline" style="margin-bottom: var(--section-gap);"><span data-icon="chevron-left"></span> 활동이력으로</a>' +
+        '<a href="activities.html" class="link-inline" style="margin-bottom: var(--section-gap);"><span data-icon="chevron-left"></span> ' + (IS_EN ? "Back to Activities" : "활동이력으로") + "</a>" +
         '<div style="max-width: 760px; margin: 0 auto;">' +
         '<span class="' + badgeClass + '" style="position:static; display:inline-block; margin-bottom:16px;">' + esc(item.category) + "</span>" +
         '<h1 class="headline-xl" style="margin-bottom: var(--stack-sm);">' + esc(item.title) + "</h1>" +

@@ -7,6 +7,11 @@
 (function () {
   "use strict";
 
+  /* English pages live under /en/ with <html lang="en">; every bit of text
+     this file injects into the DOM (not already present in the page's own
+     markup) is branched on this flag. */
+  var IS_EN = document.documentElement.lang === "en";
+
   /* ---- Inline icon library (feather-style, 24x24, stroke currentColor) --- */
   var ICON_PATHS = {
     menu: '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>',
@@ -56,10 +61,16 @@
     });
   }
 
+  var EN_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   function formatDate(iso) {
     if (!iso) return "";
     var parts = iso.split("-");
     if (parts.length !== 3) return iso;
+    if (IS_EN) {
+      var monthIdx = parseInt(parts[1], 10) - 1;
+      var month = EN_MONTHS[monthIdx] || parts[1];
+      return month + " " + parseInt(parts[2], 10) + ", " + parts[0];
+    }
     return parts[0] + ". " + parts[1] + ". " + parts[2];
   }
 
@@ -215,11 +226,9 @@
   }
 
   /* ---- Members page: render from DataStore + search/filter/paginate ---- */
-  var MEMBER_CATEGORY_LABEL = {
-    engineering: "엔지니어링",
-    solution: "솔루션",
-    operations: "운영관리"
-  };
+  var MEMBER_CATEGORY_LABEL = IS_EN
+    ? { engineering: "Engineering", solution: "Solution", operations: "Operations & Management" }
+    : { engineering: "엔지니어링", solution: "솔루션", operations: "운영관리" };
   var MEMBER_CATEGORY_ICON = { engineering: "tool", solution: "monitor", operations: "users" };
   var MEMBER_PAGE_SIZE = 9;
 
@@ -227,7 +236,7 @@
     var categories = toArray(m.category);
     var mediaIcon = MEMBER_CATEGORY_ICON[categories[0]] || "tool";
     var mediaInner = m.logo
-      ? '<img src="' + m.logo + '" alt="' + escapeHtml(m.name) + ' 로고">'
+      ? '<img src="' + m.logo + '" alt="' + escapeHtml(m.name) + (IS_EN ? " logo" : " 로고") + '">'
       : '<span data-icon="' + mediaIcon + '"></span>';
     var tags = categories.map(function (cat) {
       return '<span class="member-card__tag member-card__tag--' + escapeHtml(cat) + ' label-md">' + (MEMBER_CATEGORY_LABEL[cat] || escapeHtml(cat)) + "</span>";
@@ -239,13 +248,13 @@
       '<div class="member-card__tags">' + tags + "</div>" +
       '<h3 class="headline-md member-card__name">' + escapeHtml(m.name) + "</h3>" +
       '<ul class="member-card__meta body-md">' +
-      '<li><span data-icon="user"></span>대표: ' + escapeHtml(m.rep) + "</li>" +
-      '<li><span data-icon="tool"></span>주요분야: ' + escapeHtml(m.field) + "</li>" +
+      '<li><span data-icon="user"></span>' + (IS_EN ? "Representative: " : "대표: ") + escapeHtml(m.rep) + "</li>" +
+      '<li><span data-icon="tool"></span>' + (IS_EN ? "Main field: " : "주요분야: ") + escapeHtml(m.field) + "</li>" +
       '<li><span data-icon="map-pin"></span>' + escapeHtml(m.location) + "</li>" +
       "</ul>" +
       (m.website
-        ? '<a href="' + escapeHtml(m.website) + '" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block">홈페이지 방문 <span data-icon="arrow-right"></span></a>'
-        : '<span class="btn btn-secondary btn-block" style="opacity:0.5; cursor:not-allowed;" aria-disabled="true">등록된 홈페이지 없음</span>') +
+        ? '<a href="' + escapeHtml(m.website) + '" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-block">' + (IS_EN ? "Visit website" : "홈페이지 방문") + ' <span data-icon="arrow-right"></span></a>'
+        : '<span class="btn btn-secondary btn-block" style="opacity:0.5; cursor:not-allowed;" aria-disabled="true">' + (IS_EN ? "No website listed" : "등록된 홈페이지 없음") + '</span>') +
       "</div></article>"
     );
   }
@@ -353,8 +362,11 @@
 
   /* ---- Activities page: render bento grid from DataStore ---- */
   var ACTIVITY_INITIAL_COUNT = 5;
-  var ACTIVITY_TEXT_CATEGORIES = ["총회"];
-  var ACTIVITY_ALT_BADGE_CATEGORIES = ["연구보고", "프로젝트"];
+  /* These match the `category` values as they actually appear in
+     data/activities.json vs. data/activities_en.json — must stay in sync
+     with the category names used in the generator script for the EN file. */
+  var ACTIVITY_TEXT_CATEGORIES = IS_EN ? ["General Assembly"] : ["총회"];
+  var ACTIVITY_ALT_BADGE_CATEGORIES = IS_EN ? ["Research Report", "Project"] : ["연구보고", "프로젝트"];
 
   function activityMediaSvg() {
     return (
@@ -370,7 +382,7 @@
     var dateHtml = '<p class="label-md activity-card__date">' + formatDate(item.date) + "</p>";
     var titleTag = isWide ? "headline-lg" : "headline-md";
     var detailHref = "activity-detail.html?id=" + encodeURIComponent(item.id);
-    var detailLink = '<a href="' + detailHref + '" class="link-inline">상세보기 <span data-icon="arrow-right"></span></a>';
+    var detailLink = '<a href="' + detailHref + '" class="link-inline">' + (IS_EN ? "Learn more" : "상세보기") + ' <span data-icon="arrow-right"></span></a>';
 
     /* A thumbnail always wins over the text-only layout, since a photo is worth showing. */
     var useTextStyle = !item.thumbnail && ACTIVITY_TEXT_CATEGORIES.indexOf(item.category) !== -1;
@@ -424,16 +436,23 @@
         loadMoreBtn.addEventListener("click", function () {
           container.querySelectorAll(".activity-card.is-hidden").forEach(function (card) { card.classList.remove("is-hidden"); });
           loadMoreBtn.setAttribute("disabled", "disabled");
-          loadMoreBtn.innerHTML = "모든 활동을 확인했습니다 <span data-icon=\"check-circle\"></span>";
+          loadMoreBtn.innerHTML = (IS_EN ? "You've seen all activities" : "모든 활동을 확인했습니다") + " <span data-icon=\"check-circle\"></span>";
           injectIcons(loadMoreBtn);
         });
       }
     }
   }
 
-  /* ---- Join page: validation + Formspree email + success modal + persist ---- */
+  /* ---- Join page: validation + Formspree email + success modal + persist ----
+     Field labels sent to Formspree stay in Korean regardless of which
+     language form was submitted, since the secretariat's inbox is Korean —
+     a "Language" field is added below so they can tell English submissions
+     apart. The interest-field *values* (what the applicant actually picked)
+     are translated to match the form the applicant used. */
   var FORMSPREE_ENDPOINT = "https://formspree.io/f/meeynakl";
-  var FORMSPREE_INTEREST_LABEL = { engineering: "엔지니어링 부문", solution: "솔루션 부문", operations: "운영관리 부문" };
+  var FORMSPREE_INTEREST_LABEL = IS_EN
+    ? { engineering: "Engineering", solution: "Solution", operations: "Operations & Management" }
+    : { engineering: "엔지니어링 부문", solution: "솔루션 부문", operations: "운영관리 부문" };
 
   function isFormspreeConfigured() {
     return FORMSPREE_ENDPOINT.indexOf("YOUR_FORM_ID") === -1;
@@ -441,7 +460,9 @@
 
   function submitToFormspree(form, checkedInterests) {
     if (!isFormspreeConfigured()) {
-      console.warn("AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 로컬에만 저장합니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
+      console.warn(IS_EN
+        ? "AWC Business Association: Formspree form ID is not set, so this was saved locally only (no email sent). Check FORMSPREE_ENDPOINT in js/main.js."
+        : "AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 로컬에만 저장합니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
       return Promise.resolve({ skipped: true });
     }
     var fd = new FormData();
@@ -453,6 +474,7 @@
     fd.append("연락처", form.contactPhone.value.trim());
     fd.append("전문분야", checkedInterests.map(function (v) { return FORMSPREE_INTEREST_LABEL[v] || v; }).join(", "));
     fd.append("주요분야", form.mainField.value.trim());
+    fd.append("언어/Language", IS_EN ? "English" : "한국어");
     fd.append("_subject", "[AWC기업인연합회] 새 회원신청 - " + form.companyName.value.trim());
     fd.append("_gotcha", form._gotcha ? form._gotcha.value : "");
 
@@ -546,7 +568,9 @@
         .then(finish)
         .catch(function (err) {
           console.error("AWC기업인연합회: Formspree 제출 실패", err);
-          alert("신청서 전송에 실패했습니다. 인터넷 연결을 확인하시고 다시 시도해주세요.");
+          alert(IS_EN
+            ? "Failed to submit your application. Please check your connection and try again."
+            : "신청서 전송에 실패했습니다. 인터넷 연결을 확인하시고 다시 시도해주세요.");
           if (submitBtn) submitBtn.disabled = false;
         });
     });
@@ -562,51 +586,83 @@
     }
   }
 
-  /* ---- Footer inquiry modal + Formspree email (shared across all pages) ---- */
-  var INQUIRY_MODAL_HTML =
-    '<div class="modal-overlay" data-inquiry-modal>' +
-      '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title">' +
-        '<button type="button" class="modal__close" data-inquiry-close aria-label="닫기"><span data-icon="close"></span></button>' +
-        '<form data-inquiry-form novalidate>' +
-          '<div class="hp-field" aria-hidden="true">' +
-            '<label for="inquiry-hp">이 필드는 비워두세요</label>' +
-            '<input type="text" id="inquiry-hp" name="_gotcha" tabindex="-1" autocomplete="off">' +
+  /* ---- Footer inquiry modal + Formspree email (shared across all pages) ----
+     Text is picked by <html lang>, so the modal reads naturally on both the
+     Korean site and the English pages under /en/ without a second copy of
+     the wiring below. */
+  var INQUIRY_MODAL_STRINGS = {
+    ko: {
+      hp: "이 필드는 비워두세요", close: "닫기", title: "문의하기",
+      intro: "궁금하신 사항을 남겨주시면 사무국에서 빠르게 답변드리겠습니다.",
+      name: "성명 *", namePh: "홍길동", nameErr: "성명을 입력해주세요.",
+      email: "이메일 *", emailErr: "올바른 이메일 주소를 입력해주세요.",
+      phone: "연락처 (선택)",
+      message: "문의내용 *", messagePh: "문의하실 내용을 입력해주세요.", messageErr: "문의내용을 입력해주세요.",
+      submit: "문의 보내기",
+      successTitle: "문의가 접수되었습니다", successDesc: "빠른 시일 내에 기재하신 연락처로 답변드리겠습니다.", confirm: "확인"
+    },
+    en: {
+      hp: "Leave this field blank", close: "Close", title: "Contact Us",
+      intro: "Leave your inquiry below and our secretariat will get back to you shortly.",
+      name: "Name *", namePh: "John Doe", nameErr: "Please enter your name.",
+      email: "Email *", emailErr: "Please enter a valid email address.",
+      phone: "Phone (optional)",
+      message: "Message *", messagePh: "Please enter your inquiry.", messageErr: "Please enter your inquiry.",
+      submit: "Send Inquiry",
+      successTitle: "Your inquiry has been received", successDesc: "We will get back to you soon using the contact details you provided.", confirm: "OK"
+    }
+  };
+
+  function inquiryModalHtml() {
+    var t = IS_EN ? INQUIRY_MODAL_STRINGS.en : INQUIRY_MODAL_STRINGS.ko;
+    return (
+      '<div class="modal-overlay" data-inquiry-modal>' +
+        '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="inquiry-modal-title">' +
+          '<button type="button" class="modal__close" data-inquiry-close aria-label="' + t.close + '"><span data-icon="close"></span></button>' +
+          '<form data-inquiry-form novalidate>' +
+            '<div class="hp-field" aria-hidden="true">' +
+              '<label for="inquiry-hp">' + t.hp + '</label>' +
+              '<input type="text" id="inquiry-hp" name="_gotcha" tabindex="-1" autocomplete="off">' +
+            '</div>' +
+            '<h3 class="headline-md" id="inquiry-modal-title" style="margin-bottom: 8px;">' + t.title + '</h3>' +
+            '<p class="body-md" style="margin-bottom: 24px;">' + t.intro + '</p>' +
+            '<div class="form-field" data-form-field>' +
+              '<label for="inquiryName">' + t.name + '</label>' +
+              '<input type="text" id="inquiryName" name="inquiryName" class="input" placeholder="' + t.namePh + '" required>' +
+              '<p class="error-msg">' + t.nameErr + '</p>' +
+            '</div>' +
+            '<div class="form-field" data-form-field>' +
+              '<label for="inquiryEmail">' + t.email + '</label>' +
+              '<input type="email" id="inquiryEmail" name="inquiryEmail" class="input" placeholder="you@company.com" required>' +
+              '<p class="error-msg">' + t.emailErr + '</p>' +
+            '</div>' +
+            '<div class="form-field" data-form-field>' +
+              '<label for="inquiryPhone">' + t.phone + '</label>' +
+              '<input type="tel" id="inquiryPhone" name="inquiryPhone" class="input" placeholder="010-0000-0000">' +
+            '</div>' +
+            '<div class="form-field" data-form-field>' +
+              '<label for="inquiryMessage">' + t.message + '</label>' +
+              '<textarea id="inquiryMessage" name="inquiryMessage" class="input" rows="4" placeholder="' + t.messagePh + '" required></textarea>' +
+              '<p class="error-msg">' + t.messageErr + '</p>' +
+            '</div>' +
+            '<button type="submit" class="btn btn-primary btn-block" style="margin-top: 24px;">' + t.submit + ' <span data-icon="arrow-right"></span></button>' +
+          '</form>' +
+          '<div data-inquiry-success hidden>' +
+            '<div class="modal__icon"><span data-icon="check-circle"></span></div>' +
+            '<h3 class="headline-md" style="margin-bottom: 12px;">' + t.successTitle + '</h3>' +
+            '<p class="body-md">' + t.successDesc + '</p>' +
+            '<button type="button" class="btn btn-primary btn-block" data-inquiry-close>' + t.confirm + '</button>' +
           '</div>' +
-          '<h3 class="headline-md" id="inquiry-modal-title" style="margin-bottom: 8px;">문의하기</h3>' +
-          '<p class="body-md" style="margin-bottom: 24px;">궁금하신 사항을 남겨주시면 사무국에서 빠르게 답변드리겠습니다.</p>' +
-          '<div class="form-field" data-form-field>' +
-            '<label for="inquiryName">성명 *</label>' +
-            '<input type="text" id="inquiryName" name="inquiryName" class="input" placeholder="홍길동" required>' +
-            '<p class="error-msg">성명을 입력해주세요.</p>' +
-          '</div>' +
-          '<div class="form-field" data-form-field>' +
-            '<label for="inquiryEmail">이메일 *</label>' +
-            '<input type="email" id="inquiryEmail" name="inquiryEmail" class="input" placeholder="you@company.com" required>' +
-            '<p class="error-msg">올바른 이메일 주소를 입력해주세요.</p>' +
-          '</div>' +
-          '<div class="form-field" data-form-field>' +
-            '<label for="inquiryPhone">연락처 (선택)</label>' +
-            '<input type="tel" id="inquiryPhone" name="inquiryPhone" class="input" placeholder="010-0000-0000">' +
-          '</div>' +
-          '<div class="form-field" data-form-field>' +
-            '<label for="inquiryMessage">문의내용 *</label>' +
-            '<textarea id="inquiryMessage" name="inquiryMessage" class="input" rows="4" placeholder="문의하실 내용을 입력해주세요." required></textarea>' +
-            '<p class="error-msg">문의내용을 입력해주세요.</p>' +
-          '</div>' +
-          '<button type="submit" class="btn btn-primary btn-block" style="margin-top: 24px;">문의 보내기 <span data-icon="arrow-right"></span></button>' +
-        '</form>' +
-        '<div data-inquiry-success hidden>' +
-          '<div class="modal__icon"><span data-icon="check-circle"></span></div>' +
-          '<h3 class="headline-md" style="margin-bottom: 12px;">문의가 접수되었습니다</h3>' +
-          '<p class="body-md">빠른 시일 내에 기재하신 연락처로 답변드리겠습니다.</p>' +
-          '<button type="button" class="btn btn-primary btn-block" data-inquiry-close>확인</button>' +
         '</div>' +
-      '</div>' +
-    '</div>';
+      '</div>'
+    );
+  }
 
   function submitInquiryToFormspree(payload) {
     if (!isFormspreeConfigured()) {
-      console.warn("AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 넘어갑니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
+      console.warn(IS_EN
+        ? "AWC Business Association: Formspree form ID is not set, so no email was sent. Check FORMSPREE_ENDPOINT in js/main.js."
+        : "AWC기업인연합회: Formspree Form ID가 설정되지 않아 이메일 전송 없이 넘어갑니다. (js/main.js의 FORMSPREE_ENDPOINT를 확인하세요)");
       return Promise.resolve({ skipped: true });
     }
     var fd = new FormData();
@@ -614,6 +670,7 @@
     fd.append("이메일", payload.email);
     fd.append("연락처", payload.phone);
     fd.append("문의내용", payload.message);
+    fd.append("언어/Language", IS_EN ? "English" : "한국어");
     fd.append("_subject", "[AWC기업인연합회] 새 문의 - " + payload.name);
     fd.append("_gotcha", payload.gotcha || "");
 
@@ -631,7 +688,7 @@
     var triggers = document.querySelectorAll("[data-inquiry-open]");
     if (!triggers.length) return;
 
-    document.body.insertAdjacentHTML("beforeend", INQUIRY_MODAL_HTML);
+    document.body.insertAdjacentHTML("beforeend", inquiryModalHtml());
     var overlay = document.querySelector("[data-inquiry-modal]");
     injectIcons(overlay);
 
@@ -710,7 +767,9 @@
         })
         .catch(function (err) {
           console.error("AWC기업인연합회: 문의 전송 실패", err);
-          alert("문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
+          alert(IS_EN
+            ? "Failed to send your inquiry. Please check your connection and try again."
+            : "문의 전송에 실패했습니다. 잠시 후 다시 시도해주세요.");
           if (submitBtn) submitBtn.disabled = false;
         });
     });
