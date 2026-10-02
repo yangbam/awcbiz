@@ -1317,6 +1317,24 @@ legend {
 .admin-form-grid label { display: block; font-family: 'Work Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--on-surface-variant); margin-bottom: 6px; }
 .admin-form-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
+/* Separates the Korean fields above from the optional English (awcbiz.org/en)
+   fields below, inside the same add/edit form. */
+.admin-form-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  border-top: 1px dashed var(--outline-variant);
+  padding-top: var(--gutter);
+  margin: 4px 0 var(--gutter);
+}
+.admin-form-divider .icon { width: 16px; height: 16px; }
+.admin-table__en-missing { color: var(--on-surface-variant); font-size: 12px; }
+.admin-table__en-ok { color: var(--accent); font-size: 12px; }
+
 /* ---- Backup panel ---- */
 .backup-actions { display: flex; flex-wrap: wrap; gap: 12px; }
 
