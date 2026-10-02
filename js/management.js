@@ -248,6 +248,10 @@
         memberForm.elements.field.value = member.field;
         memberForm.elements.website.value = member.website || "";
         memberForm.elements.displayOrder.value = (member.displayOrder === undefined || member.displayOrder === null) ? "" : member.displayOrder;
+        memberForm.elements.name_en.value = member.name_en || "";
+        memberForm.elements.rep_en.value = member.rep_en || "";
+        memberForm.elements.location_en.value = member.location_en || "";
+        memberForm.elements.field_en.value = member.field_en || "";
         setLogoPreview(member.logo || "");
       } else {
         memberFormTitle.textContent = "회원사 추가";
@@ -276,11 +280,15 @@
         var logoCell = m.logo
           ? '<img src="' + m.logo + '" alt="" style="width:40px;height:40px;object-fit:contain;background:var(--surface-container-low);border-radius:var(--radius);border:1px solid var(--outline-variant);padding:4px;box-sizing:border-box;display:block;">'
           : '<div style="width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--surface-container-low);border-radius:var(--radius);border:1px solid var(--outline-variant);color:var(--on-surface-variant);box-sizing:border-box;">-</div>';
+        var hasEn = m.name_en && m.rep_en && m.location_en && m.field_en;
+        var enBadge = hasEn
+          ? '<br><span class="admin-table__en-ok">EN 번역 완료</span>'
+          : '<br><span class="admin-table__en-missing">EN 번역 필요</span>';
         return (
           "<tr>" +
           '<td class="nowrap">' + orderCell + "</td>" +
           "<td>" + logoCell + "</td>" +
-          "<td>" + esc(m.name) + "</td>" +
+          "<td>" + esc(m.name) + enBadge + "</td>" +
           "<td>" + esc(categoryLabel) + "</td>" +
           "<td>" + esc(m.rep) + "</td>" +
           "<td>" + esc(m.field) + "</td>" +
@@ -311,7 +319,11 @@
           field: memberForm.elements.field.value.trim(),
           website: window.IPA.normalizeUrl(memberForm.elements.website.value),
           displayOrder: orderRaw === "" ? null : Number(orderRaw),
-          logo: memberForm.elements.logo.value || ""
+          logo: memberForm.elements.logo.value || "",
+          name_en: memberForm.elements.name_en.value.trim(),
+          rep_en: memberForm.elements.rep_en.value.trim(),
+          location_en: memberForm.elements.location_en.value.trim(),
+          field_en: memberForm.elements.field_en.value.trim()
         };
         if (!data.name || !data.rep || !data.location || !data.field) return;
         if (data.category.length === 0) {
@@ -470,6 +482,10 @@
         activityForm.elements.description.value = item.description;
         activityForm.elements.detail.value = item.detail || "";
         activityForm.elements.displayOrder.value = (item.displayOrder === undefined || item.displayOrder === null) ? "" : item.displayOrder;
+        activityForm.elements.category_en.value = item.category_en || "";
+        activityForm.elements.title_en.value = item.title_en || "";
+        activityForm.elements.description_en.value = item.description_en || "";
+        activityForm.elements.detail_en.value = item.detail_en || "";
         setThumbnailPreview(item.thumbnail || "");
         setAttachmentPreview(item.attachmentName || "", item.attachmentDataUrl || "");
       } else {
@@ -500,6 +516,10 @@
         var badges = "";
         if (a.detail) badges += '<br><span style="color:var(--on-surface-variant);font-size:12px;">상세 내용 등록됨</span>';
         if (a.attachmentDataUrl) badges += '<br><span style="color:var(--on-surface-variant);font-size:12px;">첨부파일: ' + esc(a.attachmentName || "") + "</span>";
+        var hasEnA = a.category_en && a.title_en && a.description_en;
+        badges += hasEnA
+          ? '<br><span class="admin-table__en-ok">EN 번역 완료</span>'
+          : '<br><span class="admin-table__en-missing">EN 번역 필요</span>';
         return (
           "<tr>" +
           '<td class="nowrap">' + orderCell + "</td>" +
@@ -532,7 +552,11 @@
           thumbnail: activityForm.elements.thumbnail.value || "",
           attachmentName: activityForm.elements.attachmentName.value || "",
           attachmentDataUrl: activityForm.elements.attachmentDataUrl.value || "",
-          displayOrder: orderRaw === "" ? null : Number(orderRaw)
+          displayOrder: orderRaw === "" ? null : Number(orderRaw),
+          category_en: activityForm.elements.category_en.value || "",
+          title_en: activityForm.elements.title_en.value.trim(),
+          description_en: activityForm.elements.description_en.value.trim(),
+          detail_en: activityForm.elements.detail_en.value.trim()
         };
         if (!data.date || !data.title || !data.description) return;
         try {
@@ -628,6 +652,8 @@
     var exportBtn = document.querySelector("[data-export-btn]");
     var exportMembersBtn = document.querySelector("[data-export-members-btn]");
     var exportActivitiesBtn = document.querySelector("[data-export-activities-btn]");
+    var exportMembersEnBtn = document.querySelector("[data-export-members-en-btn]");
+    var exportActivitiesEnBtn = document.querySelector("[data-export-activities-en-btn]");
     var importInput = document.querySelector("[data-import-input]");
     var resetBtn = document.querySelector("[data-reset-btn]");
 
@@ -641,6 +667,61 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+
+    /* Projects the draft members/activities (which carry both the Korean
+       fields and the optional *_en fields entered in the admin form) down
+       to the shape data/members_en.json and data/activities_en.json need —
+       i.e. the same field names, but filled from the _en values. Items
+       missing one or more _en fields are flagged so the admin can go back
+       and fill them in before publishing (rather than silently leaking
+       Korean text onto the English site, or silently omitting the item). */
+    function buildEnglishMembers(list) {
+      var missing = [];
+      var out = list.map(function (m) {
+        var complete = m.name_en && m.rep_en && m.location_en && m.field_en;
+        if (!complete) missing.push(m.name || "(기업명 미입력)");
+        return {
+          name: m.name_en || m.name,
+          rep: m.rep_en || m.rep,
+          category: m.category,
+          location: m.location_en || m.location,
+          field: m.field_en || m.field,
+          website: m.website || "",
+          displayOrder: (m.displayOrder === undefined) ? null : m.displayOrder,
+          logo: m.logo || "",
+          id: m.id
+        };
+      });
+      return { items: out, missing: missing };
+    }
+    function buildEnglishActivities(list) {
+      var missing = [];
+      var out = list.map(function (a) {
+        var complete = a.category_en && a.title_en && a.description_en;
+        if (!complete) missing.push(a.title || "(제목 미입력)");
+        return {
+          date: a.date,
+          category: a.category_en || a.category,
+          title: a.title_en || a.title,
+          description: a.description_en || a.description,
+          detail: a.detail_en || "",
+          thumbnail: a.thumbnail || "",
+          attachmentName: a.attachmentName || "",
+          attachmentDataUrl: a.attachmentDataUrl || "",
+          displayOrder: (a.displayOrder === undefined) ? null : a.displayOrder,
+          id: a.id
+        };
+      });
+      return { items: out, missing: missing };
+    }
+    function warnIfMissing(missing, labelPlural) {
+      if (!missing.length) return;
+      alert(
+        "다음 " + missing.length + "건은 영문 번역이 비어있어 한글 내용이 그대로 내보내졌습니다 — " +
+        "영문 사이트에 올바르게 표시하려면 각 항목을 열어 \"영문 버전\" 입력란을 채워주세요.\n\n" +
+        missing.join(", ")
+      );
     }
 
     if (exportBtn) {
@@ -657,6 +738,20 @@
     if (exportActivitiesBtn) {
       exportActivitiesBtn.addEventListener("click", function () {
         downloadJson("activities.json", window.DataStore.getActivities());
+      });
+    }
+    if (exportMembersEnBtn) {
+      exportMembersEnBtn.addEventListener("click", function () {
+        var result = buildEnglishMembers(window.DataStore.getMembers());
+        downloadJson("members_en.json", result.items);
+        warnIfMissing(result.missing, "회원사");
+      });
+    }
+    if (exportActivitiesEnBtn) {
+      exportActivitiesEnBtn.addEventListener("click", function () {
+        var result = buildEnglishActivities(window.DataStore.getActivities());
+        downloadJson("activities_en.json", result.items);
+        warnIfMissing(result.missing, "활동");
       });
     }
 
