@@ -139,6 +139,29 @@
             </div>
           </div>
         </div>
+
+        <div class="admin-form-divider">
+          <span data-icon="globe"></span> 영문 버전 (awcbiz.org/en) — 비워두면 영문 사이트에 노출되지 않습니다
+        </div>
+        <div class="admin-form-grid">
+          <div>
+            <label for="m-name-en">기업명 (영문)</label>
+            <input type="text" id="m-name-en" name="name_en" class="input" placeholder="e.g. Korea Infra Engineering Co., Ltd.">
+          </div>
+          <div>
+            <label for="m-rep-en">대표자명 (영문)</label>
+            <input type="text" id="m-rep-en" name="rep_en" class="input" placeholder="e.g. Cheolsu Kim">
+          </div>
+          <div>
+            <label for="m-location-en">지역 (영문)</label>
+            <input type="text" id="m-location-en" name="location_en" class="input" placeholder="e.g. Gangnam-gu, Seoul">
+          </div>
+          <div>
+            <label for="m-field-en">주요분야 (영문)</label>
+            <input type="text" id="m-field-en" name="field_en" class="input" placeholder="e.g. Large-scale bridge and tunnel design">
+          </div>
+        </div>
+
         <div class="admin-form-actions">
           <button type="submit" class="btn btn-primary">저장</button>
           <button type="button" class="btn btn-secondary" data-member-form-cancel>취소</button>
@@ -237,6 +260,36 @@
             </div>
           </div>
         </div>
+
+        <div class="admin-form-divider">
+          <span data-icon="globe"></span> 영문 버전 (awcbiz.org/en) — 비워두면 영문 사이트에 노출되지 않습니다
+        </div>
+        <div class="admin-form-grid">
+          <div>
+            <label for="a-category-en">카테고리 (영문)</label>
+            <select id="a-category-en" name="category_en" class="input">
+              <option value="">선택 안 함</option>
+              <option value="Forum">Forum (포럼)</option>
+              <option value="Seminar">Seminar (세미나)</option>
+              <option value="Research Report">Research Report (연구보고)</option>
+              <option value="Project">Project (프로젝트)</option>
+              <option value="General Assembly">General Assembly (총회)</option>
+            </select>
+          </div>
+          <div class="full">
+            <label for="a-title-en">제목 (영문)</label>
+            <input type="text" id="a-title-en" name="title_en" class="input" placeholder="e.g. Participation in the 24th AWC Board Meeting">
+          </div>
+          <div class="full">
+            <label for="a-desc-en">설명 (영문)</label>
+            <textarea id="a-desc-en" name="description_en" class="input" rows="3"></textarea>
+          </div>
+          <div class="full">
+            <label for="a-detail-en">상세 내용 (영문)</label>
+            <textarea id="a-detail-en" name="detail_en" class="input" rows="8"></textarea>
+          </div>
+        </div>
+
         <div class="admin-form-actions">
           <button type="submit" class="btn btn-primary">저장</button>
           <button type="button" class="btn btn-secondary" data-activity-form-cancel>취소</button>
@@ -305,15 +358,20 @@
         </p>
         <ol class="body-md" style="color: var(--on-surface-variant); padding-left: 20px;">
           <li>아래 <strong>"회원사 데이터 내보내기"</strong> / <strong>"활동이력 데이터 내보내기"</strong> 버튼으로 <code>members.json</code> / <code>activities.json</code> 파일을 내려받습니다.</li>
-          <li>내려받은 파일로 프로젝트의 <code>data/members.json</code>, <code>data/activities.json</code> 파일을 각각 덮어씁니다.</li>
+          <li>영문 사이트(awcbiz.org/en)에도 반영하려면 <strong>"회원사 영문 데이터 내보내기"</strong> / <strong>"활동이력 영문 데이터 내보내기"</strong> 버튼으로 <code>members_en.json</code> / <code>activities_en.json</code>도 함께 내려받습니다 (각 항목의 "영문 버전" 입력란이 비어있으면 내보내기 시 알려드립니다).</li>
+          <li>내려받은 파일로 프로젝트의 <code>data/members.json</code>, <code>data/activities.json</code>, <code>data/members_en.json</code>, <code>data/activities_en.json</code> 파일을 각각 덮어씁니다.</li>
           <li>git에 커밋하고 push합니다(예: <code>git add data/*.json &amp;&amp; git commit -m "회원사 정보 업데이트" &amp;&amp; git push</code>).</li>
-          <li>배포가 끝나면 모든 방문자(다른 브라우저 포함)에게 동일하게 반영됩니다.</li>
+          <li>배포가 끝나면 모든 방문자(다른 브라우저 포함, 한글/영문 사이트 모두)에게 동일하게 반영됩니다.</li>
         </ol>
       </div>
 
-      <div class="backup-actions" style="margin-bottom: 24px;">
+      <div class="backup-actions" style="margin-bottom: 12px;">
         <button type="button" class="btn btn-primary" data-export-members-btn><span data-icon="download"></span> 회원사 데이터 내보내기 (members.json)</button>
         <button type="button" class="btn btn-primary" data-export-activities-btn><span data-icon="download"></span> 활동이력 데이터 내보내기 (activities.json)</button>
+      </div>
+      <div class="backup-actions" style="margin-bottom: 24px;">
+        <button type="button" class="btn btn-secondary" data-export-members-en-btn><span data-icon="globe"></span> 회원사 영문 데이터 내보내기 (members_en.json)</button>
+        <button type="button" class="btn btn-secondary" data-export-activities-en-btn><span data-icon="globe"></span> 활동이력 영문 데이터 내보내기 (activities_en.json)</button>
       </div>
 
       <h3 class="headline-md" style="font-size: 16px; margin-bottom: 8px;">전체 백업 (회원신청 내역 포함)</h3>
